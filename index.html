@@ -1,800 +1,743 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Filter, 
-  ArrowRight, 
-  Cpu, 
-  Building2, 
-  Zap, 
-  Activity, 
-  Database, 
-  ChevronRight, 
-  X,
-  ExternalLink,
-  BarChart3,
-  CheckCircle2,
-  Clock,
-  Github,
-  Linkedin,
-  Mail,
-  Briefcase,
-  FileText,
-  CalendarCheck,
-  CloudSun,
-  Mic,
-  Home,
-  HeartPulse,
-  Sun,
-  Moon,
-  BookOpen,
-  PenTool,
-  Server,
-  Cloud,
-  Box,
-  Terminal,
-  BrainCircuit,
-  Code,
-  Layers,
-  Container,
-  Rocket,
-  Search as SearchIcon,
-  Globe,
-  Gamepad2,
-  Video,
-  Utensils,
-  GraduationCap
-} from 'lucide-react';
-
-/**
- * Data: Engineering Case Studies (Detailed Deep Dives Only)
- */
-const CASE_STUDIES = [
-  {
-    id: 1,
-    title: "Lumina Family OS / Family Hub",
-    client: "Personal Project",
-    category: "Full Stack",
-    icon: Home,
-    date: "Jul 2025",
-    readTime: "App",
-    summary: "A local-first dashboard for organizing family life including meal plans, chores, events, and grocery lists with complete privacy and no accounts required.",
-    challenge: "Existing family organization apps often require expensive subscriptions and store private data on external servers. I needed a zero-latency solution that could handle complex scheduling conflicts without compromising family privacy.",
-    solution: "Architected a 'Local-First' application using React and IndexedDB. Implemented a custom dual-view calendar logic to handle multi-user schedules and integrated OpenWeatherMap API for real-time updates without backend retention.",
-    results: [
-      "Zero-latency interaction due to local-first architecture",
-      "100% data privacy (no server-side storage)",
-      "Seamless offline functionality"
-    ],
-    techStack: ["React", "IndexedDB", "Local-First", "Tailwind CSS"],
-    links: {
-      study: "https://tabitha-dev.github.io/Lumina-Family-OS-Engineering-Case-Study/",
-      demo: "https://tabitha-dev.github.io/Lumina-Family-OS/"
-    }
-  },
-  {
-    id: 4,
-    title: "Weather Outfit ADK",
-    client: "Google Dev Competition",
-    category: "AI/ML",
-    icon: CloudSun,
-    date: "Oct 2025",
-    readTime: "Case Study",
-    summary: "A production-ready multi-agent AI system built with Google's Agent Development Kit (ADK). Orchestrates 5 specialized agents using Gemini 2.0 to provide personalized outfit recommendations.",
-    challenge: "Static weather apps give data but lack context. The goal was to create an agent that understands nuance—suggesting outfits not just based on temperature, but on visual style preferences and specific weather conditions.",
-    solution: "Leveraged Google's Agent Development Kit (ADK) to orchestrate Gemini 2.0. The system uses multimodal capabilities to analyze outfit images and correlates them with live weather data.",
-    results: [
-      "Successful integration of Gemini 2.0 Multimodal API",
-      "Context-aware recommendations",
-      "Seamless agent orchestration via Python ADK"
-    ],
-    techStack: ["Google ADK", "Multi-Agent", "Gemini 2.0", "Python"],
-    links: {
-      study: "https://tabitha-dev.github.io/Weather-Outfit-ADK-Engineering-Case-Study/",
-      demo: "https://agentengine-frontend-689252953158.us-central1.run.app/"
-    }
-  },
-  {
-    id: 5,
-    title: "Voice to Asana Tasks",
-    client: "Productivity Tool",
-    category: "Automation",
-    icon: Mic,
-    date: "Sep 2025",
-    readTime: "Interactive",
-    summary: "A production-ready voice tool that creates Asana tasks via API. Features real-time speech recognition and intelligent task parsing.",
-    challenge: "Capturing fleeting ideas while on the move is difficult. Manual entry into project management tools creates friction, leading to lost tasks and ideas.",
-    solution: "Created an automated pipeline triggered by voice memos. Audio is processed through OpenAI's Whisper model (or Web Speech API) for high-accuracy transcription, parsed for action items, and automatically pushed to Asana.",
-    results: [
-      "Hands-free task generation",
-      "High transcription accuracy",
-      "Seamless API integration with Asana"
-    ],
-    techStack: ["React", "Web Speech API", "Asana API", "Automation"],
-    links: {
-      study: "https://tabitha-dev.github.io/voice-to-asana-tasks/",
-      demo: "https://tabitha-dev.github.io/voice-to-asana-tasks/" 
-    }
-  },
-  {
-    id: 2,
-    title: "MediTab Healthcare",
-    client: "Capstone",
-    category: "Healthcare",
-    icon: Activity,
-    date: "2023",
-    readTime: "8 min read",
-    summary: "A comprehensive healthcare coordination platform. Features patient management, claims processing, and role-based access control (RBAC) with audit logging for HIPAA compliance.",
-    challenge: "Healthcare coordination often suffers from fragmented data and security risks. The challenge was to build a unified platform that allows seamless collaboration between providers and billing departments while strictly adhering to HIPAA regulations.",
-    solution: "Developed a full-stack solution with strict Role-Based Access Control (RBAC). Implemented comprehensive audit logging for every data access event and secure claims processing workflows to reduce administrative overhead.",
-    results: [
-      "HIPAA-compliant architecture",
-      "Streamlined claims processing workflow",
-      "Granular access control for 4+ user roles"
-    ],
-    techStack: ["Full Stack", "RBAC", "HIPAA", "PostgreSQL", "React"],
-    links: {
-      study: "https://tabitha-dev.github.io/MediTab-Engineering-Case-Study/",
-      demo: "https://tkcapstondemo.com/"
-    }
-  },
-  {
-    id: 3,
-    title: "MedCode Pro",
-    client: "HealthTech",
-    category: "AI/ML",
-    icon: HeartPulse,
-    date: "2024",
-    readTime: "6 min read",
-    summary: "An AI-assisted medical coding interface designed to reduce claim denials. Implements complex NCCI validation rules and clinical documentation improvement logic.",
-    challenge: "Medical claim denials cost the industry billions annually due to coding errors. Manual validation against complex NCCI (National Correct Coding Initiative) rules is slow and prone to human error.",
-    solution: "Built an intelligent interface that pre-validates codes against NCCI rules in real-time. Integrated AI suggestions for Clinical Documentation Improvement (CDI) to ensure codes are supported by sufficient evidence before submission.",
-    results: [
-      "Drastic reduction in potential claim denials",
-      "Real-time NCCI conflict detection",
-      "Improved coding accuracy and compliance"
-    ],
-    techStack: ["AI/ML", "Compliance Logic", "HealthTech", "Validation"],
-    links: {
-      study: "https://tabitha-dev.github.io/MedCode-Pro-Engineering-Case-Study/",
-      demo: "https://tabitha-dev.github.io/MedCode/"
-    }
-  }
-];
-
-/**
- * Data: Articles / Technical Writing
- * Merged from HTML LinkedIn posts
- */
-const ARTICLES = [
-  {
-    id: 201,
-    title: "Building an AI Integration Hub",
-    platform: "LinkedIn",
-    category: "Architecture",
-    icon: Layers,
-    date: "Aug 2025",
-    readTime: "8 min read",
-    summary: "A scalable architectural pattern for enterprise AI integration using LangChain and a Model Context Protocol (MCP) approach.",
-    url: "https://www.linkedin.com/pulse/from-disconnected-scalable-building-ai-integration-hub-tabitha-k-7vpbc/"
-  },
-  {
-    id: 202,
-    title: "Automate Email Outreach for Free",
-    platform: "LinkedIn",
-    category: "Automation",
-    icon: Mail,
-    date: "Jan 2025",
-    readTime: "5 min read",
-    summary: "A practical guide on setting up automated email outreach campaigns using free tools and simple scripts.",
-    url: "https://www.linkedin.com/pulse/how-automate-email-outreach-free-tabitha-k-t61sc/"
-  },
-  {
-    id: 203,
-    title: "Crack Any DSA Problem",
-    platform: "LinkedIn",
-    category: "Career",
-    icon: Code,
-    date: "Nov 2024",
-    readTime: "12 min read",
-    summary: "Learn a systematic, pattern-based approach to deconstruct and solve any Data Structures and Algorithms problem.",
-    url: "https://www.linkedin.com/pulse/how-crack-any-dsa-problem-pattern-driven-guide-code-context-tabitha-k-wwvkc/"
-  },
-  {
-    id: 204,
-    title: "OpenAI’s Responses API Deep Dive",
-    platform: "LinkedIn",
-    category: "AI/ML",
-    icon: BrainCircuit,
-    date: "Nov 2024",
-    readTime: "6 min read",
-    summary: "A deep dive into using OpenAI's Responses API to create more sophisticated and context-aware AI agents.",
-    url: "https://www.linkedin.com/pulse/openais-responses-api-empowering-developers-advanced-ai-tabitha-k-gegbc/"
-  },
-  {
-    id: 205,
-    title: "Model Context Protocol (MCP) Guide",
-    platform: "LinkedIn",
-    category: "AI/ML",
-    icon: Database,
-    date: "Oct 2024",
-    readTime: "7 min read",
-    summary: "An exploration of MCP and Agent-to-Agent (A2A) communication for building more intelligent AI systems.",
-    url: "https://www.linkedin.com/pulse/how-use-model-context-protocol-mcp-agent-to-agent-a2a-tabitha-k-kw05c/"
-  },
-  {
-    id: 206,
-    title: "Supercharge Productivity with AI",
-    platform: "LinkedIn",
-    category: "Productivity",
-    icon: Zap,
-    date: "Oct 2024",
-    readTime: "5 min read",
-    summary: "Practical tips and AI tools that can be implemented immediately to boost efficiency and focus.",
-    url: "https://www.linkedin.com/pulse/supercharge-your-productivity-ai-tabitha-k-frosc/"
-  },
-  {
-    id: 207,
-    title: "AI Entering a New Phase",
-    platform: "LinkedIn",
-    category: "Analysis",
-    icon: Rocket,
-    date: "Sep 2024",
-    readTime: "6 min read",
-    summary: "An overview of the upcoming evolutionary steps for artificial intelligence and what to expect.",
-    url: "https://www.linkedin.com/pulse/ai-entering-new-phase-2025-tabitha-k-iwryc/"
-  },
-  {
-    id: 208,
-    title: "Train Your Own LLM",
-    platform: "LinkedIn",
-    category: "AI/ML",
-    icon: Cpu,
-    date: "Aug 2024",
-    readTime: "15 min read",
-    summary: "A step-by-step guide on the process and requirements for training a custom Large Language Model.",
-    url: "https://www.linkedin.com/pulse/how-train-your-own-large-language-model-llm-from-scratch-tabitha-k-r7tzc/"
-  },
-  {
-    id: 209,
-    title: "Mastering Automation",
-    platform: "LinkedIn",
-    category: "DevOps",
-    icon: Terminal,
-    date: "Aug 2024",
-    readTime: "10 min read",
-    summary: "A comprehensive cheat sheet for developers on the latest tools and best practices for automation.",
-    url: "https://www.linkedin.com/pulse/mastering-automation-2025-developers-ultimate-cheat-sheet-tabitha-k-hj9mc/"
-  },
-  {
-    id: 210,
-    title: "Traditional Automation vs. AI Agents",
-    platform: "LinkedIn",
-    category: "Strategy",
-    icon: BookOpen,
-    date: "Jul 2024",
-    readTime: "7 min read",
-    summary: "A developer-focused look at the trade-offs between traditional automation scripts and modern AI agents.",
-    url: "https://www.linkedin.com/pulse/traditional-automation-vs-ai-agents-which-one-should-developers-k-frfwc/"
-  }
-];
-
-const CATEGORIES = ["All", "Full Stack", "AI/ML", "Healthcare", "Automation", "Data"];
-
-export default function EngineeringHub() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCase, setSelectedCase] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const [viewMode, setViewMode] = useState("projects"); // 'projects' | 'articles'
-
-  // Filter Logic
-  const dataToFilter = viewMode === "projects" ? CASE_STUDIES : ARTICLES;
-  
-  const filteredData = dataToFilter.filter(item => {
-    const matchesCategory = activeCategory === "All" || item.category === activeCategory;
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (item.techStack && item.techStack.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())));
-    return matchesCategory && matchesSearch;
-  });
-
-  // Modern Color & Theme constants
-  const theme = {
-    // Main Backgrounds with gradients
-    mainBg: isDarkMode 
-      ? 'bg-[#0B1121] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]' 
-      : 'bg-slate-50 bg-[radial-gradient(100%_50%_at_50%_0%,rgba(0,163,255,0.1)_0,rgba(0,163,255,0)_50%,rgba(0,163,255,0)_100%)]',
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabitha Khadse | Engineering Hub</title>
     
-    // Typography
-    text: isDarkMode ? 'text-slate-100' : 'text-slate-900',
-    textMuted: isDarkMode ? 'text-slate-400' : 'text-slate-500',
-    textAccent: isDarkMode ? 'text-indigo-400' : 'text-indigo-600',
+    <!-- 1. Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    // Glassmorphism Cards
-    cardBg: isDarkMode ? 'bg-slate-900/40 backdrop-blur-md' : 'bg-white/70 backdrop-blur-md',
-    cardBorder: isDarkMode ? 'border-white/10' : 'border-slate-200/60',
-    cardHoverBorder: isDarkMode ? 'hover:border-indigo-500/30 hover:bg-slate-800/50' : 'hover:border-indigo-300/50 hover:shadow-xl hover:shadow-indigo-500/5 hover:bg-white/90',
+    <!-- 2. Load Babel (to interpret React) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    // Headers & Nav
-    headerBg: isDarkMode ? 'bg-[#0B1121]/80 backdrop-blur-lg' : 'bg-white/80 backdrop-blur-lg',
-    headerBorder: isDarkMode ? 'border-white/5' : 'border-slate-200/60',
-    
-    // Inputs & UI Elements
-    inputBg: isDarkMode ? 'bg-white/5' : 'bg-white',
-    inputBorder: isDarkMode ? 'border-white/10 focus:border-indigo-500/50' : 'border-slate-200 focus:border-indigo-500',
-    
-    // Tags & Pills
-    tagBg: isDarkMode ? 'bg-white/5' : 'bg-slate-100',
-    tagText: isDarkMode ? 'text-slate-300' : 'text-slate-600',
-    
-    // Toggles
-    toggleBg: isDarkMode ? 'bg-white/5' : 'bg-white border border-slate-200',
-    toggleActive: isDarkMode ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' : 'bg-indigo-50 text-indigo-700 border-indigo-200',
-    
-    // Marquee / Sections
-    marqueeBg: isDarkMode ? 'bg-white/5 border-y border-white/5' : 'bg-slate-100/50 border-y border-slate-200/60',
-    marqueeText: isDarkMode ? 'text-slate-500' : 'text-slate-400',
-    
-    // Modal
-    modalBg: isDarkMode ? 'bg-[#0f172a]' : 'bg-white',
-    modalBorder: isDarkMode ? 'border-white/10' : 'border-slate-200',
-    featureBg: isDarkMode ? 'bg-slate-900/50' : 'bg-slate-50',
-  };
-
-  // Add styles for the marquee animation
-  const styles = `
-    @keyframes marquee {
-      0% { transform: translateX(0%); }
-      100% { transform: translateX(-100%); }
-    }
-    .animate-marquee {
-      animation: marquee 35s linear infinite;
-    }
-    .marquee-mask {
-      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-      -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-    }
-  `;
-
-  // Modal Component for Case Study Details
-  const CaseStudyModal = ({ study, onClose }) => {
-    if (!study) return null;
-    const Icon = study.icon;
-    const hasDetails = study.challenge && study.solution;
-
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-        <div 
-          className={`${theme.modalBg} ${theme.modalBorder} border w-full max-w-4xl rounded-2xl shadow-2xl shadow-black/50 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-300`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Modal Header */}
-          <div className={`p-6 border-b ${theme.modalBorder} ${theme.modalBg} sticky top-0 z-10 flex justify-between items-start`}>
-            <div className="flex gap-4">
-              <div className={`p-3 rounded-xl border h-fit ${isDarkMode ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' : 'bg-indigo-50 border-indigo-100 text-indigo-600'}`}>
-                <Icon className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-xs font-bold uppercase tracking-wider ${theme.textAccent}`}>{study.category}</span>
-                  <span className={`text-xs ${theme.textMuted}`}>•</span>
-                  <span className={`text-xs ${theme.textMuted}`}>{study.date}</span>
-                </div>
-                <h2 className={`text-2xl font-bold ${theme.text}`}>{study.title}</h2>
-                <p className={`text-sm mt-1 ${theme.textMuted}`}>Client: {study.client}</p>
-              </div>
-            </div>
-            <button 
-              onClick={onClose}
-              className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10 text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'}`}
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-
-          {/* Modal Content */}
-          <div className={`p-8 overflow-y-auto space-y-8 ${isDarkMode ? 'bg-[#0B1121]/50' : 'bg-slate-50/50'}`}>
-            
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-               {study.links?.study && (
-                 <a href={study.links.study} target="_blank" rel="noopener noreferrer" className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 px-4 rounded-lg font-semibold text-center transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 hover:-translate-y-0.5">
-                   Read Full Case Study <ExternalLink className="w-4 h-4" />
-                 </a>
-               )}
-               {study.links?.demo && (
-                 <a 
-                   href={study.links.demo} 
-                   target="_blank" 
-                   rel="noopener noreferrer" 
-                   className={`flex-1 py-3 px-4 rounded-lg font-semibold text-center transition-all border flex items-center justify-center gap-2 hover:-translate-y-0.5 ${isDarkMode ? 'bg-white/5 hover:bg-white/10 border-white/10 text-white' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-sm'}`}
-                 >
-                   Launch Live Demo <Zap className="w-4 h-4" />
-                 </a>
-               )}
-            </div>
-
-            {/* Tech Stack Pills */}
-            <div className="flex flex-wrap gap-2">
-              {study.techStack?.map((tech) => (
-                <span key={tech} className={`px-3 py-1 ${theme.tagBg} border ${theme.modalBorder} rounded-full text-xs ${theme.tagText} font-medium`}>
-                  {tech}
-                </span>
-              ))}
-            </div>
-
-            {hasDetails ? (
-              <div className="grid md:grid-cols-3 gap-8">
-                <div className="md:col-span-2 space-y-8">
-                  <section>
-                    <h3 className={`text-lg font-bold ${theme.text} mb-3 flex items-center gap-2`}>
-                      <div className="w-1 h-6 bg-rose-500 rounded-full"></div>
-                      The Challenge
-                    </h3>
-                    <p className={`${theme.textMuted} leading-relaxed ${theme.featureBg} p-5 rounded-xl border ${theme.modalBorder}`}>
-                      {study.challenge}
-                    </p>
-                  </section>
-
-                  <section>
-                    <h3 className={`text-lg font-bold ${theme.text} mb-3 flex items-center gap-2`}>
-                      <div className="w-1 h-6 bg-emerald-500 rounded-full"></div>
-                      The Solution
-                    </h3>
-                    <p className={`${theme.textMuted} leading-relaxed ${theme.featureBg} p-5 rounded-xl border ${theme.modalBorder}`}>
-                      {study.solution}
-                    </p>
-                  </section>
-                </div>
-
-                {/* Sidebar Metrics */}
-                <div className="space-y-6">
-                  {study.results && (
-                    <div className={`${theme.featureBg} border ${theme.modalBorder} rounded-xl p-6`}>
-                      <h3 className={`text-xs font-bold ${theme.textMuted} uppercase tracking-wider mb-4 flex items-center gap-2`}>
-                        <BarChart3 className="w-4 h-4" /> Key Outcomes
-                      </h3>
-                      <ul className="space-y-4">
-                        {study.results.map((result, idx) => (
-                          <li key={idx} className="flex items-start gap-3">
-                            <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                            <span className={`${theme.text} text-sm font-medium`}>{result}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-               <div className="space-y-6">
-                 <h3 className={`text-lg font-semibold ${theme.text}`}>Project Summary</h3>
-                 <p className={`${theme.textMuted} leading-relaxed text-lg`}>{study.summary}</p>
-                 <div className={`${theme.featureBg} p-6 rounded-xl border ${theme.modalBorder} text-center`}>
-                    <p className={theme.textMuted}>This project is a functional demonstration. Launch the live demo to explore the features.</p>
-                 </div>
-               </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <div className={`min-h-screen ${theme.mainBg} ${theme.text} font-sans selection:bg-indigo-500/30 transition-colors duration-500`}>
-      <style>{styles}</style>
-      
-      {/* Header Section */}
-      <header className={`border-b ${theme.headerBorder} ${theme.headerBg} backdrop-blur-md sticky top-0 z-30 transition-colors duration-300`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <a href="https://tabitha-dev.github.io/portfolio/" target="_blank" rel="noreferrer" className={`text-2xl font-bold tracking-tight flex items-center gap-2 group hover:opacity-90 transition-opacity ${theme.text}`}>
-                <div className={`rounded-lg p-1 ${isDarkMode ? 'bg-indigo-600' : 'bg-indigo-600 text-white'}`}>
-                   <span className="font-mono font-bold px-1">TK</span>
-                </div>
-                <span>Tabitha<span className={theme.textAccent}>.dev</span></span>
-              </a>
-              <p className={`text-xs mt-1 ml-12 ${theme.textMuted} font-medium tracking-wide`}>ENGINEERING & DATA HUB</p>
-            </div>
-            
-            <div className="flex items-center gap-3">
-               <a href="https://tabitha-dev.github.io/portfolio/" target="_blank" rel="noreferrer" className={`hidden md:block text-sm font-medium transition-colors mr-4 ${theme.textMuted} hover:${theme.text}`}>
-                 Main Portfolio
-               </a>
-              <a 
-                href="https://code.tabitha.dev/code/tkresume2025.pdf" 
-                target="_blank" 
-                rel="noreferrer"
-                className={`text-sm font-bold px-3 py-2 flex items-center gap-2 transition-colors ${theme.textMuted} hover:${theme.text}`}
-              >
-                <FileText className="w-4 h-4" /> Resume
-              </a>
-              {/* "Let's Talk" Button Style */}
-              <a 
-                href="https://code.tabitha.dev/code/Schedule-a-Meeting/index.html" 
-                target="_blank" 
-                rel="noreferrer"
-                className={`px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all shadow-lg hover:-translate-y-0.5 ${isDarkMode ? 'bg-white text-slate-900 hover:bg-indigo-50' : 'bg-slate-900 text-white hover:bg-slate-800'}`}
-              >
-                <span>Let's Talk</span>
-                <ArrowRight className="w-4 h-4" />
-              </a>
-              
-              {/* Theme Toggle */}
-              <button 
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className={`p-2 rounded-full transition-colors border ${isDarkMode ? 'bg-white/5 border-white/10 text-yellow-400 hover:bg-white/10' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
-                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-              >
-                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main>
-        
-        {/* Intro / Hero */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
-           <div className="mb-10 max-w-4xl">
-              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-6 border uppercase tracking-wide ${isDarkMode ? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20' : 'bg-indigo-50 text-indigo-600 border-indigo-100'}`}>
-                  <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                  Engineering & Data Hub
-              </div>
-              <h1 className={`text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1] ${theme.text}`}>
-                Notes on AI, <br/>
-                <span className={`text-transparent bg-clip-text bg-gradient-to-r ${isDarkMode ? 'from-indigo-400 to-cyan-400' : 'from-indigo-600 to-cyan-600'}`}>Architecture & Code.</span>
-              </h1>
-              <p className={`text-xl leading-relaxed max-w-2xl ${theme.textMuted}`}>
-                Documenting my work in full-stack engineering, multi-agent systems, and building reliable software for the real world.
-              </p>
-            </div>
-        </div>
-
-        {/* Infinite Tech Stack Marquee */}
-        <div className={`py-8 ${theme.marqueeBg} overflow-hidden relative marquee-mask mb-16 backdrop-blur-sm`}>
-            <div className="flex w-max animate-marquee">
-                {/* Content repeated twice for seamless loop */}
-                <div className="flex items-center gap-16 px-8">
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Server className="w-5 h-5" /> Node.js</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Code className="w-5 h-5" /> React</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><FileText className="w-5 h-5" /> TypeScript</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Database className="w-5 h-5" /> PostgreSQL</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Cloud className="w-5 h-5" /> AWS</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Box className="w-5 h-5" /> Docker</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Terminal className="w-5 h-5" /> Python</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><BrainCircuit className="w-5 h-5" /> AI Agents</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Layers className="w-5 h-5" /> Tailwind</span>
-                </div>
-                <div className="flex items-center gap-16 px-8">
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Server className="w-5 h-5" /> Node.js</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Code className="w-5 h-5" /> React</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><FileText className="w-5 h-5" /> TypeScript</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Database className="w-5 h-5" /> PostgreSQL</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Cloud className="w-5 h-5" /> AWS</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Box className="w-5 h-5" /> Docker</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Terminal className="w-5 h-5" /> Python</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><BrainCircuit className="w-5 h-5" /> AI Agents</span>
-                    <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Layers className="w-5 h-5" /> Tailwind</span>
-                </div>
-            </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Context & Background Section */}
-            <div className={`grid md:grid-cols-3 gap-12 mb-20 border-y py-16 ${theme.cardBorder}`}>
-              <div className="md:col-span-2 space-y-6">
-                  <h2 className={`text-2xl font-bold flex items-center gap-3 ${theme.text}`}>
-                    <Briefcase className="w-6 h-6 text-emerald-500" />
-                    My Philosophy
-                  </h2>
-                  <p className={`text-xl ${isDarkMode ? 'text-slate-200' : 'text-slate-700'} leading-relaxed font-serif italic border-l-4 ${isDarkMode ? 'border-indigo-500' : 'border-indigo-400'} pl-6 my-6`}>
-                    "I believe code is a liability, functionality is an asset. I prioritize shipping robust, maintainable systems over chasing the latest hype cycle."
-                  </p>
-                  <p className={`${theme.textMuted} leading-relaxed text-lg`}>
-                     My operational background ensures I build for the real world, handling edge cases, ensuring scalability, and focusing on the 20% of engineering that drives 80% of the business value. Whether it's integrating LLMs or optimizing database queries, my goal is always the same: deliver reliable software that solves actual user problems.
-                  </p>
-              </div>
-              <div className={`${theme.cardBg} border ${theme.cardBorder} p-8 rounded-2xl`}>
-                  <h3 className={`font-bold mb-6 text-xs uppercase tracking-widest border-b pb-4 ${theme.text} ${theme.cardBorder}`}>Domain Expertise</h3>
-                  <ul className={`space-y-4 text-sm ${theme.textMuted}`}>
-                    <li className="flex items-center gap-3"><Database className="w-5 h-5 text-blue-500" /> Revenue Cycle Data</li>
-                    <li className="flex items-center gap-3"><Activity className="w-5 h-5 text-rose-500" /> HIPAA & Compliance</li>
-                    <li className="flex items-center gap-3"><Cpu className="w-5 h-5 text-purple-500" /> Zero-Backend Arch</li>
-                    <li className="flex items-center gap-3"><BarChart3 className="w-5 h-5 text-emerald-500" /> BI & Visualization</li>
-                  </ul>
-              </div>
-            </div>
-
-            {/* View Toggle (Projects vs Articles) */}
-            <div className="flex justify-center mb-10">
-              <div className={`p-1.5 rounded-xl flex gap-2 ${theme.toggleBg} border ${theme.cardBorder} shadow-inner`}>
-                <button
-                  onClick={() => setViewMode('projects')}
-                  className={`px-8 py-3 rounded-lg text-sm font-bold flex items-center gap-2 transition-all duration-300 ${viewMode === 'projects' ? theme.toggleActive : theme.textMuted + ' hover:' + theme.text}`}
-                >
-                  <Briefcase className="w-4 h-4" /> Case Studies
-                </button>
-                <button
-                  onClick={() => setViewMode('articles')}
-                  className={`px-8 py-3 rounded-lg text-sm font-bold flex items-center gap-2 transition-all duration-300 ${viewMode === 'articles' ? theme.toggleActive : theme.textMuted + ' hover:' + theme.text}`}
-                >
-                  <BookOpen className="w-4 h-4" /> Technical Writing
-                </button>
-              </div>
-            </div>
-
-            {/* Controls: Search & Filter */}
-            <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 sticky top-24 z-20 py-4 backdrop-blur-xl ${isDarkMode ? 'bg-[#0B1121]/90' : 'bg-slate-50/90'} rounded-xl px-2`}>
-              
-              {/* Filters */}
-              <div className="flex flex-wrap gap-2">
-                {CATEGORIES.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-200 border ${
-                      activeCategory === cat 
-                        ? (isDarkMode ? 'bg-white text-slate-900 border-white' : 'bg-slate-900 text-white border-slate-900')
-                        : (isDarkMode ? 'bg-transparent text-slate-400 border-white/10 hover:border-white/30 hover:text-white' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-800')
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-
-              {/* Search */}
-              <div className="relative w-full md:w-72">
-                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme.textMuted}`} />
-                <input 
-                  type="text" 
-                  placeholder={viewMode === 'projects' ? "Search projects..." : "Search articles..."}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`w-full ${theme.inputBg} border ${theme.inputBorder} ${theme.text} pl-10 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-500`}
-                />
-              </div>
-            </div>
-
-            {/* Grid Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
-              {filteredData.map((item) => {
-                const Icon = item.icon;
-                
-                // Article Card Rendering
-                if (viewMode === 'articles') {
-                  return (
-                    <a 
-                      key={item.id}
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`group relative ${theme.cardBg} border ${theme.cardBorder} ${theme.cardHoverBorder} rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full hover:-translate-y-1`}
-                    >
-                      <div className="p-8">
-                        <div className="flex justify-between items-start mb-6">
-                          <div className={`p-2.5 rounded-xl transition-colors ${isDarkMode ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
-                            <Icon className="w-5 h-5" />
-                          </div>
-                          <span className={`text-[10px] font-bold uppercase tracking-widest ${theme.textMuted} border ${theme.cardBorder} px-2 py-1 rounded-md bg-transparent`}>
-                            {item.category}
-                          </span>
-                        </div>
-                        
-                        <h3 className={`text-xl font-bold ${theme.text} mb-3 group-hover:text-indigo-500 transition-colors`}>
-                          {item.title}
-                        </h3>
-                        <p className={`${theme.textMuted} text-sm line-clamp-3 leading-relaxed mb-4`}>
-                          {item.summary}
-                        </p>
-                        
-                        <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-wide ${theme.textAccent}`}>
-                          Read on {item.platform} <ExternalLink className="w-3 h-3" />
-                        </div>
-                      </div>
-                      
-                      <div className={`mt-auto px-8 py-4 border-t ${theme.cardBorder} ${isDarkMode ? 'bg-black/20' : 'bg-slate-50/50'} flex justify-between items-center text-xs ${theme.textMuted} font-medium`}>
-                        <span>{item.date}</span>
-                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {item.readTime}</span>
-                      </div>
-                    </a>
-                  );
+    <!-- 3. Configure Tailwind for Dark Mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        marquee: 'marquee 35s linear infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        }
+                    }
                 }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom Scrollbar for a sleek look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        
+        .marquee-mask {
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200">
+    <div id="root"></div>
 
-                // Case Study Card Rendering (Default)
+    <!-- 4. The React Application -->
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect } from 'https://esm.sh/react@18.2.0';
+        import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
+        import { 
+            Search, Filter, ArrowRight, Cpu, Building2, Zap, Activity, Database, 
+            ChevronRight, X, ExternalLink, BarChart3, CheckCircle2, Clock, Github, 
+            Linkedin, Mail, Briefcase, FileText, CalendarCheck, CloudSun, Mic, 
+            Home, HeartPulse, Sun, Moon, BookOpen, PenTool, Server, Cloud, Box, 
+            Terminal, BrainCircuit, Code, Layers, Container, Rocket, Globe, 
+            Gamepad2, Video, Utensils, GraduationCap, ShieldCheck
+        } from 'https://esm.sh/lucide-react@0.263.1';
+
+        // --- DATA SECTION ---
+
+        const CASE_STUDIES = [
+            {
+                id: 1,
+                title: "Lumina Family OS / Family Hub",
+                client: "Personal Project",
+                category: "Full Stack",
+                icon: Home,
+                date: "Jul 2025",
+                readTime: "App",
+                summary: "A local-first dashboard for organizing family life including meal plans, chores, events, and grocery lists with complete privacy and no accounts required.",
+                challenge: "Existing family organization apps often require expensive subscriptions and store private data on external servers. I needed a zero-latency solution that could handle complex scheduling conflicts without compromising family privacy.",
+                solution: "Architected a 'Local-First' application using React and IndexedDB. Implemented a custom dual-view calendar logic to handle multi-user schedules and integrated OpenWeatherMap API for real-time updates without backend retention.",
+                results: [
+                "Zero-latency interaction due to local-first architecture",
+                "100% data privacy (no server-side storage)",
+                "Seamless offline functionality"
+                ],
+                techStack: ["React", "IndexedDB", "Local-First", "Tailwind CSS"],
+                links: {
+                study: "https://tabitha-dev.github.io/Lumina-Family-OS-Engineering-Case-Study/",
+                demo: "https://tabitha-dev.github.io/Lumina-Family-OS/"
+                }
+            },
+            {
+                id: 4,
+                title: "Weather Outfit ADK",
+                client: "Google Dev Competition",
+                category: "AI/ML",
+                icon: CloudSun,
+                date: "Oct 2025",
+                readTime: "Case Study",
+                summary: "A production-ready multi-agent AI system built with Google's Agent Development Kit (ADK). Orchestrates 5 specialized agents using Gemini 2.0 to provide personalized outfit recommendations.",
+                challenge: "Static weather apps give data but lack context. The goal was to create an agent that understands nuance—suggesting outfits not just based on temperature, but on visual style preferences and specific weather conditions.",
+                solution: "Leveraged Google's Agent Development Kit (ADK) to orchestrate Gemini 2.0. The system uses multimodal capabilities to analyze outfit images and correlates them with live weather data.",
+                results: [
+                "Successful integration of Gemini 2.0 Multimodal API",
+                "Context-aware recommendations",
+                "Seamless agent orchestration via Python ADK"
+                ],
+                techStack: ["Google ADK", "Multi-Agent", "Gemini 2.0", "Python"],
+                links: {
+                study: "https://tabitha-dev.github.io/Weather-Outfit-ADK-Engineering-Case-Study/",
+                demo: "https://agentengine-frontend-689252953158.us-central1.run.app/"
+                }
+            },
+            {
+                id: 5,
+                title: "Voice to Asana Tasks",
+                client: "Productivity Tool",
+                category: "Automation",
+                icon: Mic,
+                date: "Sep 2025",
+                readTime: "Interactive",
+                summary: "A production-ready voice tool that creates Asana tasks via API. Features real-time speech recognition and intelligent task parsing.",
+                challenge: "Capturing fleeting ideas while on the move is difficult. Manual entry into project management tools creates friction, leading to lost tasks and ideas.",
+                solution: "Created an automated pipeline triggered by voice memos. Audio is processed through OpenAI's Whisper model (or Web Speech API) for high-accuracy transcription, parsed for action items, and automatically pushed to Asana.",
+                results: [
+                "Hands-free task generation",
+                "High transcription accuracy",
+                "Seamless API integration with Asana"
+                ],
+                techStack: ["React", "Web Speech API", "Asana API", "Automation"],
+                links: {
+                study: "https://tabitha-dev.github.io/voice-to-asana-tasks/",
+                demo: "https://tabitha-dev.github.io/voice-to-asana-tasks/" 
+                }
+            },
+            {
+                id: 2,
+                title: "MediTab Healthcare",
+                client: "Capstone",
+                category: "Healthcare",
+                icon: Activity,
+                date: "2023",
+                readTime: "8 min read",
+                summary: "A comprehensive healthcare coordination platform. Features patient management, claims processing, and role-based access control (RBAC) with audit logging for HIPAA compliance.",
+                challenge: "Healthcare coordination often suffers from fragmented data and security risks. The challenge was to build a unified platform that allows seamless collaboration between providers and billing departments while strictly adhering to HIPAA regulations.",
+                solution: "Developed a full-stack solution with strict Role-Based Access Control (RBAC). Implemented comprehensive audit logging for every data access event and secure claims processing workflows to reduce administrative overhead.",
+                results: [
+                "HIPAA-compliant architecture",
+                "Streamlined claims processing workflow",
+                "Granular access control for 4+ user roles"
+                ],
+                techStack: ["Full Stack", "RBAC", "HIPAA", "PostgreSQL", "React"],
+                links: {
+                study: "https://tabitha-dev.github.io/MediTab-Engineering-Case-Study/",
+                demo: "https://tkcapstondemo.com/"
+                }
+            },
+            {
+                id: 3,
+                title: "MedCode Pro",
+                client: "HealthTech",
+                category: "AI/ML",
+                icon: HeartPulse,
+                date: "2024",
+                readTime: "6 min read",
+                summary: "An AI-assisted medical coding interface designed to reduce claim denials. Implements complex NCCI validation rules and clinical documentation improvement logic.",
+                challenge: "Medical claim denials cost the industry billions annually due to coding errors. Manual validation against complex NCCI (National Correct Coding Initiative) rules is slow and prone to human error.",
+                solution: "Built an intelligent interface that pre-validates codes against NCCI rules in real-time. Integrated AI suggestions for Clinical Documentation Improvement (CDI) to ensure codes are supported by sufficient evidence before submission.",
+                results: [
+                "Drastic reduction in potential claim denials",
+                "Real-time NCCI conflict detection",
+                "Improved coding accuracy and compliance"
+                ],
+                techStack: ["AI/ML", "Compliance Logic", "HealthTech", "Validation"],
+                links: {
+                study: "https://tabitha-dev.github.io/MedCode-Pro-Engineering-Case-Study/",
+                demo: "https://tabitha-dev.github.io/MedCode/"
+                }
+            }
+        ];
+
+        const ARTICLES = [
+            {
+                id: 201,
+                title: "Building an AI Integration Hub",
+                platform: "LinkedIn",
+                category: "Architecture",
+                icon: Layers,
+                date: "Aug 2025",
+                readTime: "8 min read",
+                summary: "A scalable architectural pattern for enterprise AI integration using LangChain and a Model Context Protocol (MCP) approach.",
+                url: "https://www.linkedin.com/pulse/from-disconnected-scalable-building-ai-integration-hub-tabitha-k-7vpbc/"
+            },
+            {
+                id: 202,
+                title: "Automate Email Outreach for Free",
+                platform: "LinkedIn",
+                category: "Automation",
+                icon: Mail,
+                date: "Jan 2025",
+                readTime: "5 min read",
+                summary: "A practical guide on setting up automated email outreach campaigns using free tools and simple scripts.",
+                url: "https://www.linkedin.com/pulse/how-automate-email-outreach-free-tabitha-k-t61sc/"
+            },
+            {
+                id: 203,
+                title: "Crack Any DSA Problem",
+                platform: "LinkedIn",
+                category: "Career",
+                icon: Code,
+                date: "Nov 2024",
+                readTime: "12 min read",
+                summary: "Learn a systematic, pattern-based approach to deconstruct and solve any Data Structures and Algorithms problem.",
+                url: "https://www.linkedin.com/pulse/how-crack-any-dsa-problem-pattern-driven-guide-code-context-tabitha-k-wwvkc/"
+            },
+            {
+                id: 204,
+                title: "OpenAI’s Responses API Deep Dive",
+                platform: "LinkedIn",
+                category: "AI/ML",
+                icon: BrainCircuit,
+                date: "Nov 2024",
+                readTime: "6 min read",
+                summary: "A deep dive into using OpenAI's Responses API to create more sophisticated and context-aware AI agents.",
+                url: "https://www.linkedin.com/pulse/openais-responses-api-empowering-developers-advanced-ai-tabitha-k-gegbc/"
+            },
+            {
+                id: 205,
+                title: "Model Context Protocol (MCP) Guide",
+                platform: "LinkedIn",
+                category: "AI/ML",
+                icon: Database,
+                date: "Oct 2024",
+                readTime: "7 min read",
+                summary: "An exploration of MCP and Agent-to-Agent (A2A) communication for building more intelligent AI systems.",
+                url: "https://www.linkedin.com/pulse/how-use-model-context-protocol-mcp-agent-to-agent-a2a-tabitha-k-kw05c/"
+            },
+            {
+                id: 206,
+                title: "Supercharge Productivity with AI",
+                platform: "LinkedIn",
+                category: "Productivity",
+                icon: Zap,
+                date: "Oct 2024",
+                readTime: "5 min read",
+                summary: "Practical tips and AI tools that can be implemented immediately to boost efficiency and focus.",
+                url: "https://www.linkedin.com/pulse/supercharge-your-productivity-ai-tabitha-k-frosc/"
+            },
+            {
+                id: 207,
+                title: "AI Entering a New Phase",
+                platform: "LinkedIn",
+                category: "Analysis",
+                icon: Rocket,
+                date: "Sep 2024",
+                readTime: "6 min read",
+                summary: "An overview of the upcoming evolutionary steps for artificial intelligence and what to expect.",
+                url: "https://www.linkedin.com/pulse/ai-entering-new-phase-2025-tabitha-k-iwryc/"
+            },
+            {
+                id: 208,
+                title: "Train Your Own LLM",
+                platform: "LinkedIn",
+                category: "AI/ML",
+                icon: Cpu,
+                date: "Aug 2024",
+                readTime: "15 min read",
+                summary: "A step-by-step guide on the process and requirements for training a custom Large Language Model.",
+                url: "https://www.linkedin.com/pulse/how-train-your-own-large-language-model-llm-from-scratch-tabitha-k-r7tzc/"
+            },
+            {
+                id: 209,
+                title: "Mastering Automation",
+                platform: "LinkedIn",
+                category: "DevOps",
+                icon: Terminal,
+                date: "Aug 2024",
+                readTime: "10 min read",
+                summary: "A comprehensive cheat sheet for developers on the latest tools and best practices for automation.",
+                url: "https://www.linkedin.com/pulse/mastering-automation-2025-developers-ultimate-cheat-sheet-tabitha-k-hj9mc/"
+            },
+            {
+                id: 210,
+                title: "Traditional Automation vs. AI Agents",
+                platform: "LinkedIn",
+                category: "Strategy",
+                icon: BookOpen,
+                date: "Jul 2024",
+                readTime: "7 min read",
+                summary: "A developer-focused look at the trade-offs between traditional automation scripts and modern AI agents.",
+                url: "https://www.linkedin.com/pulse/traditional-automation-vs-ai-agents-which-one-should-developers-k-frfwc/"
+            }
+        ];
+
+        const CATEGORIES = ["All", "Full Stack", "AI/ML", "Healthcare", "Automation", "Data"];
+
+        const IMPACT_METRICS = [
+            { label: "Years in RCM & Data", value: "8+", icon: Clock },
+            { label: "Full Stack Projects", value: "15+", icon: Code },
+            { label: "HIPAA Compliance", value: "100%", icon: ShieldCheck },
+            { label: "Technical Articles", value: "10+", icon: BookOpen },
+        ];
+
+        const COMPETENCIES = [
+            {
+                title: "System Architecture",
+                description: "Designing scalable, fault-tolerant systems using modern patterns like Microservices and Serverless.",
+                icon: Layers,
+                color: "text-blue-500",
+                bg: "bg-blue-500/10"
+            },
+            {
+                title: "AI Integration",
+                description: "Embedding LLMs and multi-agent workflows into production applications using RAG and MCP.",
+                icon: BrainCircuit,
+                color: "text-purple-500",
+                bg: "bg-purple-500/10"
+            },
+            {
+                title: "Product Engineering",
+                description: "Bridging the gap between technical complexity and user experience with a product-first mindset.",
+                icon: Rocket,
+                color: "text-emerald-500",
+                bg: "bg-emerald-500/10"
+            }
+        ];
+
+        // --- COMPONENT SECTION ---
+
+        function EngineeringHub() {
+            const [activeCategory, setActiveCategory] = useState("All");
+            const [searchQuery, setSearchQuery] = useState("");
+            const [selectedCase, setSelectedCase] = useState(null);
+            const [isDarkMode, setIsDarkMode] = useState(true);
+            const [viewMode, setViewMode] = useState("projects");
+
+            const dataToFilter = viewMode === "projects" ? CASE_STUDIES : ARTICLES;
+            
+            const filteredData = dataToFilter.filter(item => {
+                const matchesCategory = activeCategory === "All" || item.category === activeCategory;
+                const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    (item.techStack && item.techStack.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())));
+                return matchesCategory && matchesSearch;
+            });
+
+            const theme = {
+                mainBg: isDarkMode 
+                ? 'bg-[#0B1121] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))]' 
+                : 'bg-slate-50 bg-[radial-gradient(100%_50%_at_50%_0%,rgba(0,163,255,0.1)_0,rgba(0,163,255,0)_50%,rgba(0,163,255,0)_100%)]',
+                text: isDarkMode ? 'text-slate-100' : 'text-slate-900',
+                textMuted: isDarkMode ? 'text-slate-400' : 'text-slate-500',
+                textAccent: isDarkMode ? 'text-indigo-400' : 'text-indigo-600',
+                cardBg: isDarkMode ? 'bg-slate-900/40 backdrop-blur-md' : 'bg-white/70 backdrop-blur-md',
+                cardBorder: isDarkMode ? 'border-white/10' : 'border-slate-200/60',
+                cardHoverBorder: isDarkMode ? 'hover:border-indigo-500/30 hover:bg-slate-800/50' : 'hover:border-indigo-300/50 hover:shadow-xl hover:shadow-indigo-500/5 hover:bg-white/90',
+                headerBg: isDarkMode ? 'bg-[#0B1121]/80 backdrop-blur-lg' : 'bg-white/80 backdrop-blur-lg',
+                headerBorder: isDarkMode ? 'border-white/5' : 'border-slate-200/60',
+                inputBg: isDarkMode ? 'bg-white/5' : 'bg-white',
+                inputBorder: isDarkMode ? 'border-white/10 focus:border-indigo-500/50' : 'border-slate-200 focus:border-indigo-500',
+                tagBg: isDarkMode ? 'bg-white/5' : 'bg-slate-100',
+                tagText: isDarkMode ? 'text-slate-300' : 'text-slate-600',
+                toggleBg: isDarkMode ? 'bg-white/5' : 'bg-white border border-slate-200',
+                toggleActive: isDarkMode ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' : 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                marqueeBg: isDarkMode ? 'bg-white/5 border-y border-white/5' : 'bg-slate-100/50 border-y border-slate-200/60',
+                marqueeText: isDarkMode ? 'text-slate-500' : 'text-slate-400',
+                modalBg: isDarkMode ? 'bg-[#0f172a]' : 'bg-white',
+                modalBorder: isDarkMode ? 'border-white/10' : 'border-slate-200',
+                featureBg: isDarkMode ? 'bg-slate-900/50' : 'bg-slate-50',
+            };
+
+            const CaseStudyModal = ({ study, onClose }) => {
+                if (!study) return null;
+                const Icon = study.icon;
+                const hasDetails = study.challenge && study.solution;
+
                 return (
-                  <div 
-                    key={item.id}
-                    onClick={() => setSelectedCase(item)}
-                    className={`group relative ${theme.cardBg} border ${theme.cardBorder} ${theme.cardHoverBorder} rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer flex flex-col h-full hover:-translate-y-1`}
-                  >
-                    <div className="p-8 pb-6">
-                      <div className="flex justify-between items-start mb-8">
-                        <div className={`p-3.5 rounded-2xl transition-colors ${isDarkMode ? 'bg-slate-800/80 group-hover:bg-indigo-500/20 group-hover:text-indigo-300' : 'bg-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600'}`}>
-                          <Icon className="w-6 h-6" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
+                    <div 
+                    className={`${theme.modalBg} ${theme.modalBorder} border w-full max-w-4xl rounded-2xl shadow-2xl shadow-black/50 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-300`}
+                    onClick={(e) => e.stopPropagation()}
+                    >
+                    <div className={`p-6 border-b ${theme.modalBorder} ${theme.modalBg} sticky top-0 z-10 flex justify-between items-start`}>
+                        <div className="flex gap-4">
+                        <div className={`p-3 rounded-xl border h-fit ${isDarkMode ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' : 'bg-indigo-50 border-indigo-100 text-indigo-600'}`}>
+                            <Icon className="w-6 h-6" />
                         </div>
-                        <span className={`text-[10px] font-bold uppercase tracking-widest ${theme.textMuted} border ${theme.cardBorder} px-2 py-1 rounded-md`}>
-                          {item.category}
-                        </span>
-                      </div>
-                      
-                      <h3 className={`text-xl font-bold ${theme.text} mb-3 group-hover:text-indigo-500 transition-colors line-clamp-2`}>
-                        {item.title}
-                      </h3>
-                      <p className={`${theme.textMuted} text-sm line-clamp-3 leading-relaxed`}>
-                        {item.summary}
-                      </p>
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                            <span className={`text-xs font-bold uppercase tracking-wider ${theme.textAccent}`}>{study.category}</span>
+                            <span className={`text-xs ${theme.textMuted}`}>•</span>
+                            <span className={`text-xs ${theme.textMuted}`}>{study.date}</span>
+                            </div>
+                            <h2 className={`text-2xl font-bold ${theme.text}`}>{study.title}</h2>
+                            <p className={`text-sm mt-1 ${theme.textMuted}`}>Client: {study.client}</p>
+                        </div>
+                        </div>
+                        <button onClick={onClose} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10 text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'}`}>
+                        <X className="w-6 h-6" />
+                        </button>
                     </div>
 
-                    <div className={`mt-auto px-8 py-5 border-t ${theme.cardBorder} ${isDarkMode ? 'bg-black/20' : 'bg-slate-50/50'} flex justify-between items-center`}>
-                      <div className={`flex items-center gap-2 text-xs ${theme.textMuted} font-medium`}>
-                        <Clock className="w-3.5 h-3.5" />
-                        {item.readTime}
-                      </div>
-                      <div className={`flex items-center gap-1 text-xs font-bold uppercase tracking-wide ${isDarkMode ? 'text-slate-300' : 'text-slate-600'} group-hover:translate-x-1 transition-transform group-hover:text-indigo-500`}>
-                        View Details <ChevronRight className="w-4 h-4" />
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+                    <div className={`p-8 overflow-y-auto space-y-8 ${isDarkMode ? 'bg-[#0B1121]/50' : 'bg-slate-50/50'}`}>
+                        <div className="flex gap-4">
+                        {study.links?.study && (
+                            <a href={study.links.study} target="_blank" rel="noopener noreferrer" className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 px-4 rounded-lg font-semibold text-center transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 hover:-translate-y-0.5">
+                            Read Full Case Study <ExternalLink className="w-4 h-4" />
+                            </a>
+                        )}
+                        {study.links?.demo && (
+                            <a href={study.links.demo} target="_blank" rel="noopener noreferrer" className={`flex-1 py-3 px-4 rounded-lg font-semibold text-center transition-all border flex items-center justify-center gap-2 hover:-translate-y-0.5 ${isDarkMode ? 'bg-white/5 hover:bg-white/10 border-white/10 text-white' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-sm'}`}>
+                            Launch Live Demo <Zap className="w-4 h-4" />
+                            </a>
+                        )}
+                        </div>
 
-            {filteredData.length === 0 && (
-              <div className="text-center py-20">
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border ${theme.cardBorder} ${isDarkMode ? 'bg-white/5' : 'bg-slate-100'}`}>
-                  <Filter className={`w-6 h-6 ${theme.textMuted}`} />
+                        <div className="flex flex-wrap gap-2">
+                        {study.techStack?.map((tech) => (
+                            <span key={tech} className={`px-3 py-1 ${theme.tagBg} border ${theme.modalBorder} rounded-full text-xs ${theme.tagText} font-medium`}>
+                            {tech}
+                            </span>
+                        ))}
+                        </div>
+
+                        {hasDetails ? (
+                        <div className="grid md:grid-cols-3 gap-8">
+                            <div className="md:col-span-2 space-y-8">
+                            <section>
+                                <h3 className={`text-lg font-bold ${theme.text} mb-3 flex items-center gap-2`}>
+                                <div className="w-1 h-6 bg-rose-500 rounded-full"></div>
+                                The Challenge
+                                </h3>
+                                <p className={`${theme.textMuted} leading-relaxed ${theme.featureBg} p-5 rounded-xl border ${theme.modalBorder}`}>
+                                {study.challenge}
+                                </p>
+                            </section>
+                            <section>
+                                <h3 className={`text-lg font-bold ${theme.text} mb-3 flex items-center gap-2`}>
+                                <div className="w-1 h-6 bg-emerald-500 rounded-full"></div>
+                                The Solution
+                                </h3>
+                                <p className={`${theme.textMuted} leading-relaxed ${theme.featureBg} p-5 rounded-xl border ${theme.modalBorder}`}>
+                                {study.solution}
+                                </p>
+                            </section>
+                            </div>
+                            <div className="space-y-6">
+                            {study.results && (
+                                <div className={`${theme.featureBg} border ${theme.modalBorder} rounded-xl p-6`}>
+                                <h3 className={`text-xs font-bold ${theme.textMuted} uppercase tracking-wider mb-4 flex items-center gap-2`}>
+                                    <BarChart3 className="w-4 h-4" /> Key Outcomes
+                                </h3>
+                                <ul className="space-y-4">
+                                    {study.results.map((result, idx) => (
+                                    <li key={idx} className="flex items-start gap-3">
+                                        <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                                        <span className={`${theme.text} text-sm font-medium`}>{result}</span>
+                                    </li>
+                                    ))}
+                                </ul>
+                                </div>
+                            )}
+                            </div>
+                        </div>
+                        ) : (
+                        <div className="space-y-6">
+                            <h3 className={`text-lg font-semibold ${theme.text}`}>Project Summary</h3>
+                            <p className={`${theme.textMuted} leading-relaxed text-lg`}>{study.summary}</p>
+                            <div className={`${theme.featureBg} p-6 rounded-xl border ${theme.modalBorder} text-center`}>
+                                <p className={theme.textMuted}>This project is a functional demonstration. Launch the live demo to explore the features.</p>
+                            </div>
+                        </div>
+                        )}
+                    </div>
+                    </div>
                 </div>
-                <h3 className={`text-lg font-bold ${theme.text}`}>No {viewMode === 'projects' ? 'case studies' : 'articles'} found</h3>
-                <p className={theme.textMuted}>Try adjusting your filters or search terms.</p>
-                <button 
-                  onClick={() => {setSearchQuery(""); setActiveCategory("All")}}
-                  className="mt-6 text-indigo-500 hover:text-indigo-400 text-sm font-bold uppercase tracking-wide"
-                >
-                  Clear all filters
-                </button>
-              </div>
-            )}
-        </div>
+                );
+            };
 
-      </main>
+            return (
+                <div className={`min-h-screen ${theme.mainBg} ${theme.text} font-sans selection:bg-indigo-500/30 transition-colors duration-500`}>
+                <header className={`border-b ${theme.headerBorder} ${theme.headerBg} backdrop-blur-md sticky top-0 z-30 transition-colors duration-300`}>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                        <a href="https://tabitha-dev.github.io/portfolio/" target="_blank" rel="noreferrer" className={`text-2xl font-bold tracking-tight flex items-center gap-2 group hover:opacity-90 transition-opacity ${theme.text}`}>
+                            <div className={`rounded-lg p-1 ${isDarkMode ? 'bg-indigo-600' : 'bg-indigo-600 text-white'}`}>
+                            <span className="font-mono font-bold px-1">TK</span>
+                            </div>
+                            <span>Tabitha<span className={theme.textAccent}>.dev</span></span>
+                        </a>
+                        <p className={`text-xs mt-1 ml-12 ${theme.textMuted} font-medium tracking-wide`}>ENGINEERING & DATA HUB</p>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                        <a href="https://tabitha-dev.github.io/portfolio/" target="_blank" rel="noreferrer" className={`hidden md:block text-sm font-medium transition-colors mr-4 ${theme.textMuted} hover:${theme.text}`}>
+                            Main Portfolio
+                        </a>
+                        <a href="https://code.tabitha.dev/code/tkresume2025.pdf" target="_blank" rel="noreferrer" className={`text-sm font-bold px-3 py-2 flex items-center gap-2 transition-colors ${theme.textMuted} hover:${theme.text}`}>
+                            <FileText className="w-4 h-4" /> Resume
+                        </a>
+                        <a href="https://code.tabitha.dev/code/Schedule-a-Meeting/index.html" target="_blank" rel="noreferrer" className={`px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all shadow-lg hover:-translate-y-0.5 ${isDarkMode ? 'bg-white text-slate-900 hover:bg-indigo-50' : 'bg-slate-900 text-white hover:bg-slate-800'}`}>
+                            <span>Let's Talk</span>
+                            <ArrowRight className="w-4 h-4" />
+                        </a>
+                        
+                        <button onClick={() => setIsDarkMode(!isDarkMode)} className={`p-2 rounded-full transition-colors border ${isDarkMode ? 'bg-white/5 border-white/10 text-yellow-400 hover:bg-white/10' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`} title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
+                            {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                        </button>
+                        </div>
+                    </div>
+                    </div>
+                </header>
 
-      {/* Footer */}
-      <footer className={`border-t ${theme.headerBorder} ${isDarkMode ? 'bg-[#0B1121]' : 'bg-slate-50'} py-16 mt-12`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-center md:text-left">
-            <h2 className={`text-lg font-bold flex items-center gap-2 justify-center md:justify-start ${theme.text}`}>
-              <Cpu className="w-5 h-5 text-indigo-500" />
-              <span>Tabitha<span className={theme.textMuted}>.</span>dev</span>
-            </h2>
-            <p className={`${theme.textMuted} text-xs mt-3`}>© 2025 Tabitha Khadse. All rights reserved.</p>
-          </div>
-          <div className="flex gap-8">
-             <a href="https://github.com/tabitha-dev" target="_blank" rel="noreferrer" className={`${theme.textMuted} hover:text-indigo-500 transition-colors`}>
-                <Github className="w-5 h-5" />
-             </a>
-             <a href="https://www.linkedin.com/in/tabitha-dev/" target="_blank" rel="noreferrer" className={`${theme.textMuted} hover:text-indigo-500 transition-colors`}>
-                <Linkedin className="w-5 h-5" />
-             </a>
-             <a href="mailto:tabitha@ieee.org" className={`${theme.textMuted} hover:text-indigo-500 transition-colors`}>
-                <Mail className="w-5 h-5" />
-             </a>
-          </div>
-        </div>
-      </footer>
+                <main>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
+                    <div className="mb-10 max-w-4xl">
+                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-6 border uppercase tracking-wide ${isDarkMode ? 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20' : 'bg-indigo-50 text-indigo-600 border-indigo-100'}`}>
+                            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                            Engineering & Data Hub
+                        </div>
+                        <h1 className={`text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1] ${theme.text}`}>
+                            Notes on AI, <br/>
+                            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${isDarkMode ? 'from-indigo-400 to-cyan-400' : 'from-indigo-600 to-cyan-600'}`}>Architecture & Code.</span>
+                        </h1>
+                        <p className={`text-xl leading-relaxed max-w-2xl ${theme.textMuted}`}>
+                            Documenting my work in full-stack engineering, multi-agent systems, and building reliable software for the real world.
+                        </p>
+                    </div>
+                    </div>
 
-      {/* Detail View Modal */}
-      {selectedCase && (
-        <CaseStudyModal 
-          study={selectedCase} 
-          onClose={() => setSelectedCase(null)} 
-        />
-      )}
+                    <div className={`py-8 ${theme.marqueeBg} overflow-hidden relative marquee-mask mb-16 backdrop-blur-sm`}>
+                        <div className="flex w-max animate-marquee">
+                            <div className="flex items-center gap-16 px-8">
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Server className="w-5 h-5" /> Node.js</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Code className="w-5 h-5" /> React</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><FileText className="w-5 h-5" /> TypeScript</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Database className="w-5 h-5" /> PostgreSQL</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Cloud className="w-5 h-5" /> AWS</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Box className="w-5 h-5" /> Docker</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Terminal className="w-5 h-5" /> Python</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><BrainCircuit className="w-5 h-5" /> AI Agents</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Layers className="w-5 h-5" /> Tailwind</span>
+                            </div>
+                            <div className="flex items-center gap-16 px-8">
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Server className="w-5 h-5" /> Node.js</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Code className="w-5 h-5" /> React</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><FileText className="w-5 h-5" /> TypeScript</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Database className="w-5 h-5" /> PostgreSQL</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Cloud className="w-5 h-5" /> AWS</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Box className="w-5 h-5" /> Docker</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Terminal className="w-5 h-5" /> Python</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><BrainCircuit className="w-5 h-5" /> AI Agents</span>
+                                <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Layers className="w-5 h-5" /> Tailwind</span>
+                            </div>
+                        </div>
+                    </div>
 
-    </div>
-  );
-}
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+                        <div className={`grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-2xl ${theme.cardBg} border ${theme.cardBorder}`}>
+                            {IMPACT_METRICS.map((metric, idx) => {
+                                const Icon = metric.icon;
+                                return (
+                                <div key={idx} className="flex flex-col items-center justify-center text-center">
+                                    <div className={`mb-3 p-3 rounded-full ${isDarkMode ? 'bg-white/5' : 'bg-slate-100'}`}>
+                                        <Icon className={`w-6 h-6 ${theme.textAccent}`} />
+                                    </div>
+                                    <div className={`text-3xl font-bold ${theme.text}`}>{metric.value}</div>
+                                    <div className={`text-sm font-medium ${theme.textMuted} mt-1`}>{metric.label}</div>
+                                </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className={`grid md:grid-cols-3 gap-12 mb-20 border-y py-16 ${theme.cardBorder}`}>
+                            <div className="md:col-span-1 space-y-6">
+                                <h2 className={`text-2xl font-bold flex items-center gap-3 ${theme.text}`}>
+                                    <Briefcase className="w-6 h-6 text-emerald-500" />
+                                    My Philosophy
+                                </h2>
+                                <p className={`text-lg ${isDarkMode ? 'text-slate-200' : 'text-slate-700'} leading-relaxed font-serif italic border-l-4 ${isDarkMode ? 'border-indigo-500' : 'border-indigo-400'} pl-6 my-6`}>
+                                    "I believe code is a liability, functionality is an asset. I prioritize shipping robust, maintainable systems over chasing the latest hype cycle."
+                                </p>
+                            </div>
+                            <div className="md:col-span-2 grid md:grid-cols-2 gap-6">
+                                {COMPETENCIES.map((item, idx) => {
+                                    const Icon = item.icon;
+                                    return (
+                                        <div key={idx} className={`p-6 rounded-xl border ${theme.cardBorder} ${theme.cardBg} hover:-translate-y-1 transition-transform duration-300`}>
+                                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${item.bg}`}>
+                                                <Icon className={`w-5 h-5 ${item.color}`} />
+                                            </div>
+                                            <h3 className={`font-bold ${theme.text} mb-2`}>{item.title}</h3>
+                                            <p className={`text-sm ${theme.textMuted} leading-relaxed`}>{item.description}</p>
+                                        </div>
+                                    )
+                                })}
+                                <div className={`p-6 rounded-xl border ${theme.cardBorder} ${theme.cardBg}`}>
+                                    <h3 className={`font-bold ${theme.text} mb-4 flex items-center gap-2`}>
+                                        <Database className="w-5 h-5 text-blue-500" /> Domain Knowledge
+                                    </h3>
+                                    <ul className={`space-y-3 text-sm ${theme.textMuted}`}>
+                                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-500"/> Revenue Cycle Data</li>
+                                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-rose-500"/> HIPAA & Compliance</li>
+                                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"/> BI & Visualization</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center mb-10">
+                            <div className={`p-1.5 rounded-xl flex gap-2 ${theme.toggleBg} border ${theme.cardBorder} shadow-inner`}>
+                                <button onClick={() => setViewMode('projects')} className={`px-8 py-3 rounded-lg text-sm font-bold flex items-center gap-2 transition-all duration-300 ${viewMode === 'projects' ? theme.toggleActive : theme.textMuted + ' hover:' + theme.text}`}>
+                                    <Briefcase className="w-4 h-4" /> Case Studies
+                                </button>
+                                <button onClick={() => setViewMode('articles')} className={`px-8 py-3 rounded-lg text-sm font-bold flex items-center gap-2 transition-all duration-300 ${viewMode === 'articles' ? theme.toggleActive : theme.textMuted + ' hover:' + theme.text}`}>
+                                    <BookOpen className="w-4 h-4" /> Technical Writing
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 sticky top-24 z-20 py-4 backdrop-blur-xl ${isDarkMode ? 'bg-[#0B1121]/90' : 'bg-slate-50/90'} rounded-xl px-2`}>
+                            <div className="flex flex-wrap gap-2">
+                                {CATEGORIES.map(cat => (
+                                    <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-200 border ${activeCategory === cat ? (isDarkMode ? 'bg-white text-slate-900 border-white' : 'bg-slate-900 text-white border-slate-900') : (isDarkMode ? 'bg-transparent text-slate-400 border-white/10 hover:border-white/30 hover:text-white' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-800')}`}>
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="relative w-full md:w-72">
+                                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme.textMuted}`} />
+                                <input type="text" placeholder={viewMode === 'projects' ? "Search projects..." : "Search articles..."} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full ${theme.inputBg} border ${theme.inputBorder} ${theme.text} pl-10 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-500`} />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
+                            {filteredData.map((item) => {
+                                const Icon = item.icon;
+                                if (viewMode === 'articles') {
+                                    return (
+                                        <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className={`group relative ${theme.cardBg} border ${theme.cardBorder} ${theme.cardHoverBorder} rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full hover:-translate-y-1`}>
+                                            <div className="p-8">
+                                                <div className="flex justify-between items-start mb-6">
+                                                    <div className={`p-2.5 rounded-xl transition-colors ${isDarkMode ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
+                                                        <Icon className="w-5 h-5" />
+                                                    </div>
+                                                    <span className={`text-[10px] font-bold uppercase tracking-widest ${theme.textMuted} border ${theme.cardBorder} px-2 py-1 rounded-md bg-transparent`}>
+                                                        {item.category}
+                                                    </span>
+                                                </div>
+                                                <h3 className={`text-xl font-bold ${theme.text} mb-3 group-hover:text-indigo-500 transition-colors`}>{item.title}</h3>
+                                                <p className={`${theme.textMuted} text-sm line-clamp-3 leading-relaxed mb-4`}>{item.summary}</p>
+                                                <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-wide ${theme.textAccent}`}>
+                                                    Read on {item.platform} <ExternalLink className="w-3 h-3" />
+                                                </div>
+                                            </div>
+                                            <div className={`mt-auto px-8 py-4 border-t ${theme.cardBorder} ${isDarkMode ? 'bg-black/20' : 'bg-slate-50/50'} flex justify-between items-center text-xs ${theme.textMuted} font-medium`}>
+                                                <span>{item.date}</span>
+                                                <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {item.readTime}</span>
+                                            </div>
+                                        </a>
+                                    );
+                                }
+                                return (
+                                    <div key={item.id} onClick={() => setSelectedCase(item)} className={`group relative ${theme.cardBg} border ${theme.cardBorder} ${theme.cardHoverBorder} rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer flex flex-col h-full hover:-translate-y-1`}>
+                                        <div className="p-8 pb-6">
+                                            <div className="flex justify-between items-start mb-8">
+                                                <div className={`p-3.5 rounded-2xl transition-colors ${isDarkMode ? 'bg-slate-800/80 group-hover:bg-indigo-500/20 group-hover:text-indigo-300' : 'bg-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600'}`}>
+                                                    <Icon className="w-6 h-6" />
+                                                </div>
+                                                <span className={`text-[10px] font-bold uppercase tracking-widest ${theme.textMuted} border ${theme.cardBorder} px-2 py-1 rounded-md`}>
+                                                    {item.category}
+                                                </span>
+                                            </div>
+                                            <h3 className={`text-xl font-bold ${theme.text} mb-3 group-hover:text-indigo-500 transition-colors line-clamp-2`}>{item.title}</h3>
+                                            <p className={`${theme.textMuted} text-sm line-clamp-3 leading-relaxed`}>{item.summary}</p>
+                                        </div>
+                                        <div className={`mt-auto px-8 py-5 border-t ${theme.cardBorder} ${isDarkMode ? 'bg-black/20' : 'bg-slate-50/50'} flex justify-between items-center`}>
+                                            <div className={`flex items-center gap-2 text-xs ${theme.textMuted} font-medium`}>
+                                                <Clock className="w-3.5 h-3.5" />
+                                                {item.readTime}
+                                            </div>
+                                            <div className={`flex items-center gap-1 text-xs font-bold uppercase tracking-wide ${isDarkMode ? 'text-slate-300' : 'text-slate-600'} group-hover:translate-x-1 transition-transform group-hover:text-indigo-500`}>
+                                                View Details <ChevronRight className="w-4 h-4" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        {filteredData.length === 0 && (
+                            <div className="text-center py-20">
+                                <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border ${theme.cardBorder} ${isDarkMode ? 'bg-white/5' : 'bg-slate-100'}`}>
+                                    <Filter className={`w-6 h-6 ${theme.textMuted}`} />
+                                </div>
+                                <h3 className={`text-lg font-bold ${theme.text}`}>No {viewMode === 'projects' ? 'case studies' : 'articles'} found</h3>
+                                <p className={theme.textMuted}>Try adjusting your filters or search terms.</p>
+                                <button onClick={() => {setSearchQuery(""); setActiveCategory("All")}} className="mt-6 text-indigo-500 hover:text-indigo-400 text-sm font-bold uppercase tracking-wide">
+                                    Clear all filters
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </main>
+
+                <footer className={`border-t ${theme.headerBorder} ${isDarkMode ? 'bg-[#0B1121]' : 'bg-slate-50'} py-16 mt-12`}>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div className="text-center md:text-left">
+                            <h2 className={`text-lg font-bold flex items-center gap-2 justify-center md:justify-start ${theme.text}`}>
+                                <Cpu className="w-5 h-5 text-indigo-500" />
+                                <span>Tabitha<span className={theme.textMuted}>.</span>dev</span>
+                            </h2>
+                            <p className={`${theme.textMuted} text-xs mt-3`}>© 2025 Tabitha Khadse. All rights reserved.</p>
+                        </div>
+                        <div className="flex gap-8">
+                            <a href="https://github.com/tabitha-dev" target="_blank" rel="noreferrer" className={`${theme.textMuted} hover:text-indigo-500 transition-colors`}>
+                                <Github className="w-5 h-5" />
+                            </a>
+                            <a href="https://www.linkedin.com/in/tabitha-dev/" target="_blank" rel="noreferrer" className={`${theme.textMuted} hover:text-indigo-500 transition-colors`}>
+                                <Linkedin className="w-5 h-5" />
+                            </a>
+                            <a href="mailto:tabitha@ieee.org" className={`${theme.textMuted} hover:text-indigo-500 transition-colors`}>
+                                <Mail className="w-5 h-5" />
+                            </a>
+                        </div>
+                    </div>
+                </footer>
+
+                {selectedCase && (
+                    <CaseStudyModal study={selectedCase} onClose={() => setSelectedCase(null)} />
+                )}
+                </div>
+            );
+        }
+
+        // --- RENDER APP ---
+        const root = createRoot(document.getElementById('root'));
+        root.render(<EngineeringHub />);
+    </script>
+</body>
+</html>

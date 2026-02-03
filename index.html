@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabitha Khadse | Engineering Hub</title>
     
-    <!-- SEO & Social Sharing (Crucial for LinkedIn/Recruiters) -->
+    <!-- SEO & Social Sharing -->
     <meta name="description" content="Engineering portfolio of Tabitha Khadse. Case studies in Full Stack, AI/ML, and RCM Automation.">
     <meta property="og:title" content="Tabitha Khadse | Engineering Hub">
     <meta property="og:description" content="Transitioning from Operations to Engineering. Explore my case studies in AI, Automation, and Full Stack Development.">
@@ -19,10 +19,15 @@
     <!-- 1. Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. Load Babel (to interpret React) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- 2. Load Babel (Pinned Version to fix 'targets' error) -->
+    <script src="https://unpkg.com/@babel/standalone@7.23.6/babel.min.js"></script>
+
+    <!-- 3. Polyfill for React 18 Process Env (Critical for ESM imports) -->
+    <script>
+        window.process = { env: { NODE_ENV: 'production' } };
+    </script>
     
-    <!-- 3. Configure Tailwind for Dark Mode -->
+    <!-- 4. Configure Tailwind -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -46,7 +51,9 @@
     </script>
     
     <style>
-        /* Custom Scrollbar for a sleek look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -65,7 +72,7 @@
 <body class="bg-slate-950 text-slate-200">
     <div id="root"></div>
 
-    <!-- 4. The React Application -->
+    <!-- 5. The React Application -->
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect } from 'https://esm.sh/react@18.2.0';
         import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
@@ -860,27 +867,27 @@
                                 }
                                 return (
                                     <div key={item.id} onClick={() => setSelectedCase(item)} className={`group relative ${theme.cardBg} border ${theme.cardBorder} ${theme.cardHoverBorder} rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer flex flex-col h-full hover:-translate-y-1`}>
-                                        <div className="p-8 pb-6">
-                                            <div className="flex justify-between items-start mb-8">
-                                                <div className={`p-3.5 rounded-2xl transition-colors ${isDarkMode ? 'bg-slate-800/80 group-hover:bg-indigo-500/20 group-hover:text-indigo-300' : 'bg-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600'}`}>
-                                                    <Icon className="w-6 h-6" />
+                                            <div className="p-8 pb-6">
+                                                <div className="flex justify-between items-start mb-8">
+                                                    <div className={`p-3.5 rounded-2xl transition-colors ${isDarkMode ? 'bg-slate-800/80 group-hover:bg-indigo-500/20 group-hover:text-indigo-300' : 'bg-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600'}`}>
+                                                        <Icon className="w-6 h-6" />
+                                                    </div>
+                                                    <span className={`text-[10px] font-bold uppercase tracking-widest ${theme.textMuted} border ${theme.cardBorder} px-2 py-1 rounded-md`}>
+                                                        {item.category}
+                                                    </span>
                                                 </div>
-                                                <span className={`text-[10px] font-bold uppercase tracking-widest ${theme.textMuted} border ${theme.cardBorder} px-2 py-1 rounded-md`}>
-                                                    {item.category}
-                                                </span>
+                                                <h3 className={`text-xl font-bold ${theme.text} mb-3 group-hover:text-indigo-500 transition-colors line-clamp-2`}>{item.title}</h3>
+                                                <p className={`${theme.textMuted} text-sm line-clamp-3 leading-relaxed`}>{item.summary}</p>
                                             </div>
-                                            <h3 className={`text-xl font-bold ${theme.text} mb-3 group-hover:text-indigo-500 transition-colors line-clamp-2`}>{item.title}</h3>
-                                            <p className={`${theme.textMuted} text-sm line-clamp-3 leading-relaxed`}>{item.summary}</p>
-                                        </div>
-                                        <div className={`mt-auto px-8 py-5 border-t ${theme.cardBorder} ${isDarkMode ? 'bg-black/20' : 'bg-slate-50/50'} flex justify-between items-center`}>
-                                            <div className={`flex items-center gap-2 text-xs ${theme.textMuted} font-medium`}>
-                                                <Clock className="w-3.5 h-3.5" />
-                                                {item.readTime}
+                                            <div className={`mt-auto px-8 py-5 border-t ${theme.cardBorder} ${isDarkMode ? 'bg-black/20' : 'bg-slate-50/50'} flex justify-between items-center`}>
+                                                <div className={`flex items-center gap-2 text-xs ${theme.textMuted} font-medium`}>
+                                                    <Clock className="w-3.5 h-3.5" />
+                                                    {item.readTime}
+                                                </div>
+                                                <div className={`flex items-center gap-1 text-xs font-bold uppercase tracking-wide ${isDarkMode ? 'text-slate-300' : 'text-slate-600'} group-hover:translate-x-1 transition-transform group-hover:text-indigo-500`}>
+                                                    View Details <ChevronRight className="w-4 h-4" />
+                                                </div>
                                             </div>
-                                            <div className={`flex items-center gap-1 text-xs font-bold uppercase tracking-wide ${isDarkMode ? 'text-slate-300' : 'text-slate-600'} group-hover:translate-x-1 transition-transform group-hover:text-indigo-500`}>
-                                                View Details <ChevronRight className="w-4 h-4" />
-                                            </div>
-                                        </div>
                                     </div>
                                 )
                             })}
@@ -947,10 +954,10 @@
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                     <a href="mailto:tabitha@ieee.org" className={`px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all shadow-lg hover:-translate-y-1 ${isDarkMode ? 'bg-white text-indigo-900 hover:bg-indigo-50' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}>
-                                            <Mail className="w-5 h-5" /> Send an Email
+                                                <Mail className="w-5 h-5" /> Send an Email
                                     </a>
                                     <a href="https://code.tabitha.dev/code/Schedule-a-Meeting/index.html" target="_blank" className={`px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all border hover:-translate-y-1 ${isDarkMode ? 'border-white/20 hover:bg-white/10 text-white' : 'border-slate-200 hover:bg-white text-slate-700'}`}>
-                                            <CalendarCheck className="w-5 h-5" /> Let's Connect
+                                                <CalendarCheck className="w-5 h-5" /> Let's Connect
                                     </a>
                                 </div>
                             </div>

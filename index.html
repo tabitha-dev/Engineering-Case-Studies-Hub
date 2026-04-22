@@ -275,8 +275,7 @@
         const IMPACT_METRICS = [
             { label: "Years in RCM & Data", value: "8+", icon: Clock },
             { label: "Full Stack Projects", value: "15+", icon: Code },
-            { label: "HIPAA Compliance", value: "100%", icon: ShieldCheck },
-            { label: "Technical Articles", value: "10+", icon: BookOpen },
+            { label: "HIPAA Compliance", value: "100%", icon: ShieldCheck }
         ];
 
         const COMPETENCIES = [
@@ -594,7 +593,7 @@
                     </div>
 
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
-                        <div className={`grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-2xl ${theme.cardBg} border ${theme.cardBorder}`}>
+                        <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 p-8 rounded-2xl ${theme.cardBg} border ${theme.cardBorder}`}>
                             {IMPACT_METRICS.map((metric, idx) => {
                                 const Icon = metric.icon;
                                 return (
@@ -614,15 +613,16 @@
                         <div className={`grid md:grid-cols-3 gap-12 mb-20 border-y py-16 ${theme.cardBorder}`}>
                             <div className="md:col-span-1 space-y-6">
                                 <div className="flex flex-col items-center md:items-start gap-6">
-                                    {/* Adjusted container to be physically smaller instead of using a transform scale, giving a more balanced portrait feel */}
-                                    <div className="relative group w-24 h-24 md:w-28 md:h-28 shrink-0">
+                                    <div className="relative group w-32 h-32 md:w-40 md:h-40 shrink-0">
                                         <div className={`absolute -inset-1.5 rounded-full blur-md opacity-40 group-hover:opacity-70 transition duration-1000 group-hover:duration-200 ${isDarkMode ? 'bg-indigo-500' : 'bg-indigo-400'}`}></div>
-                                        <img 
-                                            src="./PXL_20260408_222637220.PORTRAIT~2.jpg" 
-                                            alt="Tabitha Khadse" 
-                                            className={`relative w-full h-full rounded-full object-cover border-4 z-10 shadow-xl ${theme.cardBorder}`}
-                                            style={{ objectPosition: 'center' }}
-                                        />
+                                        <div className={`relative w-full h-full rounded-full border-4 z-10 shadow-xl ${theme.cardBorder} overflow-hidden ${isDarkMode ? 'bg-slate-900' : 'bg-slate-100'} p-1.5`}>
+                                            <img 
+                                                src="./PXL_20260408_222637220.PORTRAIT~2.jpg" 
+                                                alt="Tabitha Khadse" 
+                                                className="w-full h-full rounded-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                style={{ objectPosition: 'center' }}
+                                            />
+                                        </div>
                                     </div>
                                     <div>
                                         <h2 className={`text-2xl font-bold flex items-center gap-3 ${theme.text} mb-4`}>

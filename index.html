@@ -270,129 +270,6 @@
             }
         ];
 
-        const ARTICLES = [
-            {
-                id: 201,
-                title: "Building an AI Integration Hub",
-                platform: "LinkedIn",
-                category: "Architecture",
-                icon: Layers,
-                date: "Aug 2025",
-                readTime: "8 min read",
-                summary: "A scalable architectural pattern for enterprise AI integration using LangChain and a Model Context Protocol (MCP) approach.",
-                url: "https://www.linkedin.com/pulse/from-disconnected-scalable-building-ai-integration-hub-tabitha-k-7vpbc/",
-                tags: ["LangChain", "MCP", "Architecture"]
-            },
-            {
-                id: 202,
-                title: "Automate Email Outreach for Free",
-                platform: "LinkedIn",
-                category: "Automation",
-                icon: Mail,
-                date: "Jan 2025",
-                readTime: "5 min read",
-                summary: "A practical guide on setting up automated email outreach campaigns using free tools and simple scripts.",
-                url: "https://www.linkedin.com/pulse/how-automate-email-outreach-free-tabitha-k-t61sc/",
-                tags: ["Python", "Automation", "SMTP"]
-            },
-            {
-                id: 203,
-                title: "Crack Any DSA Problem",
-                platform: "LinkedIn",
-                category: "Career",
-                icon: Code,
-                date: "Nov 2024",
-                readTime: "12 min read",
-                summary: "Learn a systematic, pattern-based approach to deconstruct and solve any Data Structures and Algorithms problem.",
-                url: "https://www.linkedin.com/pulse/how-crack-any-dsa-problem-pattern-driven-guide-code-context-tabitha-k-wwvkc/",
-                tags: ["Algorithms", "Data Structures", "Interview Prep"]
-            },
-            {
-                id: 204,
-                title: "OpenAI’s Responses API Deep Dive",
-                platform: "LinkedIn",
-                category: "AI/ML",
-                icon: BrainCircuit,
-                date: "Nov 2024",
-                readTime: "6 min read",
-                summary: "A deep dive into using OpenAI's Responses API to create more sophisticated and context-aware AI agents.",
-                url: "https://www.linkedin.com/pulse/openais-responses-api-empowering-developers-advanced-ai-tabitha-k-gegbc/",
-                tags: ["OpenAI", "API", "Agents"]
-            },
-            {
-                id: 205,
-                title: "Model Context Protocol (MCP) Guide",
-                platform: "LinkedIn",
-                category: "AI/ML",
-                icon: Database,
-                date: "Oct 2024",
-                readTime: "7 min read",
-                summary: "An exploration of MCP and Agent-to-Agent (A2A) communication for building more intelligent AI systems.",
-                url: "https://www.linkedin.com/pulse/how-use-model-context-protocol-mcp-agent-to-agent-a2a-tabitha-k-kw05c/",
-                tags: ["MCP", "AI Architecture", "Standards"]
-            },
-            {
-                id: 206,
-                title: "Supercharge Productivity with AI",
-                platform: "LinkedIn",
-                category: "Productivity",
-                icon: Zap,
-                date: "Oct 2024",
-                readTime: "5 min read",
-                summary: "Practical tips and AI tools that can be implemented immediately to boost efficiency and focus.",
-                url: "https://www.linkedin.com/pulse/supercharge-your-productivity-ai-tabitha-k-frosc/",
-                tags: ["Tools", "Workflow", "AI"]
-            },
-            {
-                id: 207,
-                title: "AI Entering a New Phase",
-                platform: "LinkedIn",
-                category: "Analysis",
-                icon: Rocket,
-                date: "Sep 2024",
-                readTime: "6 min read",
-                summary: "An overview of the upcoming evolutionary steps for artificial intelligence and what to expect.",
-                url: "https://www.linkedin.com/pulse/ai-entering-new-phase-2025-tabitha-k-iwryc/",
-                tags: ["Strategy", "Future Tech"]
-            },
-            {
-                id: 208,
-                title: "Train Your Own LLM",
-                platform: "LinkedIn",
-                category: "AI/ML",
-                icon: Cpu,
-                date: "Aug 2024",
-                readTime: "15 min read",
-                summary: "A step-by-step guide on the process and requirements for training a custom Large Language Model.",
-                url: "https://www.linkedin.com/pulse/how-train-your-own-large-language-model-llm-from-scratch-tabitha-k-r7tzc/",
-                tags: ["LLM", "Python", "Training"]
-            },
-            {
-                id: 209,
-                title: "Mastering Automation",
-                platform: "LinkedIn",
-                category: "DevOps",
-                icon: Terminal,
-                date: "Aug 2024",
-                readTime: "10 min read",
-                summary: "A comprehensive cheat sheet for developers on the latest tools and best practices for automation.",
-                url: "https://www.linkedin.com/pulse/mastering-automation-2025-developers-ultimate-cheat-sheet-tabitha-k-hj9mc/",
-                tags: ["DevOps", "CI/CD", "Scripts"]
-            },
-            {
-                id: 210,
-                title: "Traditional Automation vs. AI Agents",
-                platform: "LinkedIn",
-                category: "Strategy",
-                icon: BookOpen,
-                date: "Jul 2024",
-                readTime: "7 min read",
-                summary: "A developer-focused look at the trade-offs between traditional automation scripts and modern AI agents.",
-                url: "https://www.linkedin.com/pulse/traditional-automation-vs-ai-agents-which-one-should-developers-k-frfwc/",
-                tags: ["Automation", "Comparison", "Strategy"]
-            }
-        ];
-
         const CATEGORIES = ["All", "Full Stack", "AI/ML", "Healthcare", "Automation", "Data"];
 
         const IMPACT_METRICS = [
@@ -486,9 +363,8 @@
             const [searchQuery, setSearchQuery] = useState("");
             const [selectedCase, setSelectedCase] = useState(null);
             const [isDarkMode, setIsDarkMode] = useState(true);
-            const [viewMode, setViewMode] = useState("projects");
 
-            const dataToFilter = viewMode === "projects" ? CASE_STUDIES : ARTICLES;
+            const dataToFilter = CASE_STUDIES;
             
             const filteredData = dataToFilter.filter(item => {
                 const matchesCategory = activeCategory === "All" || item.category === activeCategory;
@@ -735,18 +611,17 @@
                     </div>
 
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        {/* Modified Philosophy Section with Photo */}
                         <div className={`grid md:grid-cols-3 gap-12 mb-20 border-y py-16 ${theme.cardBorder}`}>
                             <div className="md:col-span-1 space-y-6">
                                 <div className="flex flex-col items-center md:items-start gap-6">
-                                    {/* FIX APPLIED HERE: Added explicit w/h to wrapper and w-full/h-full to image. Removed scale class. */}
-                                    <div className="relative group w-32 h-32 md:w-40 md:h-40 shrink-0">
+                                    {/* Adjusted container to be physically smaller instead of using a transform scale, giving a more balanced portrait feel */}
+                                    <div className="relative group w-24 h-24 md:w-28 md:h-28 shrink-0">
                                         <div className={`absolute -inset-1.5 rounded-full blur-md opacity-40 group-hover:opacity-70 transition duration-1000 group-hover:duration-200 ${isDarkMode ? 'bg-indigo-500' : 'bg-indigo-400'}`}></div>
                                         <img 
                                             src="./PXL_20260408_222637220.PORTRAIT~2.jpg" 
                                             alt="Tabitha Khadse" 
                                             className={`relative w-full h-full rounded-full object-cover border-4 z-10 shadow-xl ${theme.cardBorder}`}
-                                            style={{ objectPosition: 'center 20%' }}
+                                            style={{ objectPosition: 'center' }}
                                         />
                                     </div>
                                     <div>
@@ -814,17 +689,6 @@
                             </div>
                         </div>
 
-                        <div className="flex justify-center mb-10">
-                            <div className={`p-1.5 rounded-xl flex gap-2 ${theme.toggleBg} border ${theme.cardBorder} shadow-inner`}>
-                                <button onClick={() => setViewMode('projects')} className={`px-8 py-3 rounded-lg text-sm font-bold flex items-center gap-2 transition-all duration-300 ${viewMode === 'projects' ? theme.toggleActive : theme.textMuted + ' hover:' + theme.text}`}>
-                                    <Briefcase className="w-4 h-4" /> Case Studies
-                                </button>
-                                <button onClick={() => setViewMode('articles')} className={`px-8 py-3 rounded-lg text-sm font-bold flex items-center gap-2 transition-all duration-300 ${viewMode === 'articles' ? theme.toggleActive : theme.textMuted + ' hover:' + theme.text}`}>
-                                    <BookOpen className="w-4 h-4" /> Technical Writing
-                                </button>
-                            </div>
-                        </div>
-
                         <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 sticky top-24 z-20 py-4 backdrop-blur-xl ${isDarkMode ? 'bg-[#0B1121]/90' : 'bg-slate-50/90'} rounded-xl px-2`}>
                             <div className="flex flex-wrap gap-2">
                                 {CATEGORIES.map(cat => (
@@ -835,38 +699,13 @@
                             </div>
                             <div className="relative w-full md:w-72">
                                 <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme.textMuted}`} />
-                                <input type="text" placeholder={viewMode === 'projects' ? "Search projects..." : "Search articles..."} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full ${theme.inputBg} border ${theme.inputBorder} ${theme.text} pl-10 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-500`} />
+                                <input type="text" placeholder="Search case studies..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full ${theme.inputBg} border ${theme.inputBorder} ${theme.text} pl-10 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-500`} />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
                             {filteredData.map((item) => {
                                 const Icon = item.icon;
-                                if (viewMode === 'articles') {
-                                    return (
-                                        <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className={`group relative ${theme.cardBg} border ${theme.cardBorder} ${theme.cardHoverBorder} rounded-2xl overflow-hidden transition-all duration-300 flex flex-col h-full hover:-translate-y-1`}>
-                                            <div className="p-8">
-                                                <div className="flex justify-between items-start mb-6">
-                                                    <div className={`p-2.5 rounded-xl transition-colors ${isDarkMode ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
-                                                        <Icon className="w-5 h-5" />
-                                                    </div>
-                                                    <span className={`text-[10px] font-bold uppercase tracking-widest ${theme.textMuted} border ${theme.cardBorder} px-2 py-1 rounded-md bg-transparent`}>
-                                                        {item.category}
-                                                    </span>
-                                                </div>
-                                                <h3 className={`text-xl font-bold ${theme.text} mb-3 group-hover:text-indigo-500 transition-colors`}>{item.title}</h3>
-                                                <p className={`${theme.textMuted} text-sm line-clamp-3 leading-relaxed mb-4`}>{item.summary}</p>
-                                                <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-wide ${theme.textAccent}`}>
-                                                    Read on {item.platform} <ExternalLink className="w-3 h-3" />
-                                                </div>
-                                            </div>
-                                            <div className={`mt-auto px-8 py-4 border-t ${theme.cardBorder} ${isDarkMode ? 'bg-black/20' : 'bg-slate-50/50'} flex justify-between items-center text-xs ${theme.textMuted} font-medium`}>
-                                                <span>{item.date}</span>
-                                                <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {item.readTime}</span>
-                                            </div>
-                                        </a>
-                                    );
-                                }
                                 return (
                                     <div key={item.id} onClick={() => setSelectedCase(item)} className={`group relative ${theme.cardBg} border ${theme.cardBorder} ${theme.cardHoverBorder} rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer flex flex-col h-full hover:-translate-y-1`}>
                                             <div className="p-8 pb-6">
@@ -900,7 +739,7 @@
                                 <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border ${theme.cardBorder} ${isDarkMode ? 'bg-white/5' : 'bg-slate-100'}`}>
                                     <Filter className={`w-6 h-6 ${theme.textMuted}`} />
                                 </div>
-                                <h3 className={`text-lg font-bold ${theme.text}`}>No {viewMode === 'projects' ? 'case studies' : 'articles'} found</h3>
+                                <h3 className={`text-lg font-bold ${theme.text}`}>No case studies found</h3>
                                 <p className={theme.textMuted}>Try adjusting your filters or search terms.</p>
                                 <button onClick={() => {setSearchQuery(""); setActiveCategory("All")}} className="mt-6 text-indigo-500 hover:text-indigo-400 text-sm font-bold uppercase tracking-wide">
                                     Clear all filters
@@ -978,7 +817,7 @@
                                 <Cpu className="w-5 h-5 text-indigo-500" />
                                 <span>Tabitha<span className={theme.textMuted}>.</span>dev</span>
                             </h2>
-                            <p className={`${theme.textMuted} text-xs mt-3`}>© 2025 Tabitha Khadse. All rights reserved.</p>
+                            <p className={`${theme.textMuted} text-xs mt-3`}>© 2026 Tabitha Khadse. All rights reserved.</p>
                             <p className="text-[10px] text-slate-600 mt-2 opacity-50 font-mono">Built with React & Tailwind</p>
                         </div>
                         <div className="flex gap-8">

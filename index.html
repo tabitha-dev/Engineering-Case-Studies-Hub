@@ -739,22 +739,15 @@
                         <div className={`grid md:grid-cols-3 gap-12 mb-20 border-y py-16 ${theme.cardBorder}`}>
                             <div className="md:col-span-1 space-y-6">
                                 <div className="flex flex-col items-center md:items-start gap-6">
-                                   <div className="relative group">
-  <div
-    className={`absolute -inset-1 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200 ${
-      isDarkMode ? 'bg-indigo-600' : 'bg-indigo-400'
-    }`}
-  ></div>
-
-  <div className={`relative w-36 h-36 rounded-full overflow-hidden border-4 ${theme.cardBorder}`}>
-    <img
-      src="./PXL_20260408_222637220.PORTRAIT~2.jpg"
-      alt="Tabitha Khadse"
-      className="w-full h-full object-cover scale-80"
-      style={{ objectPosition: 'center 25%' }}
-    />
-  </div>
-</div>
+                                    <div className="relative group">
+                                        <div className={`absolute -inset-1 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200 ${isDarkMode ? 'bg-indigo-600' : 'bg-indigo-400'}`}></div>
+                                        <img 
+                                            src="./PXL_20260408_222637220.PORTRAIT~2.jpg" 
+                                            alt="Tabitha Khadse" 
+                                            className={`relative w-40 h-40 rounded-full object-cover border-4 ${theme.cardBorder}`}
+                                        />
+                                    </div>
+                                    <div>
                                         <h2 className={`text-2xl font-bold flex items-center gap-3 ${theme.text} mb-4`}>
                                             My Philosophy
                                         </h2>

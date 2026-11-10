@@ -17,6 +17,9 @@
 - [ShipLab — reviewed AI-agent experiment](https://github.com/tabitha-dev/agent-shiplab)
 - [Big World — book and learning resource platform](https://code.tabitha.dev/bigworld/)
 
+- [Sthit — live wellness website](https://sthit.life/)
+- [Buffalo Leather Belts — live client website](https://buffaloleatherbelts.store/)
+
 ## Important distinctions
 
 The hub includes educational simulations and experiments. Clinical and billing demos use synthetic data and are not certified production medical systems. For ShipLab, independent CI passed but native agent-recorded QA was not verified. Human review remains part of AI-assisted work. The source and current portfolio are the best references for implementation and role details.

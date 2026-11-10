@@ -471,6 +471,17 @@
             const [searchQuery, setSearchQuery] = useState("");
             const [selectedCase, setSelectedCase] = useState(null);
             const [isDarkMode, setIsDarkMode] = useState(true);
+            const lastCaseTriggerRef = React.useRef(null);
+            const openCaseStudy = (study, trigger) => {
+                lastCaseTriggerRef.current = trigger;
+                setSelectedCase(study);
+            };
+            useEffect(() => {
+                if (!selectedCase && lastCaseTriggerRef.current) {
+                    lastCaseTriggerRef.current.focus({ preventScroll: true });
+                    lastCaseTriggerRef.current = null;
+                }
+            }, [selectedCase]);
             useEffect(() => { if (!selectedCase) return; const onEscape = (event) => { if (event.key === "Escape") setSelectedCase(null); }; window.addEventListener("keydown", onEscape); return () => window.removeEventListener("keydown", onEscape); }, [selectedCase]);
 
             const dataToFilter = CASE_STUDIES;
@@ -511,6 +522,31 @@
             };
 
             const CaseStudyModal = ({ study, onClose }) => {
+                const dialogRef = React.useRef(null);
+                useEffect(() => {
+                    const dialog = dialogRef.current;
+                    if (!dialog) return;
+                    const selector = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+                    const oldOverflow = document.body.style.overflow;
+                    document.body.style.overflow = "hidden";
+                    dialog.querySelector('[aria-label="Close case study"]')?.focus({ preventScroll: true });
+                    const trapFocus = (event) => {
+                        if (event.key !== "Tab") return;
+                        const elements = [...dialog.querySelectorAll(selector)].filter(el => el.getClientRects().length > 0);
+                        if (!elements.length) { event.preventDefault(); dialog.focus(); return; }
+                        const first = elements[0], last = elements[elements.length - 1];
+                        if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+                            event.preventDefault(); last.focus();
+                        } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
+                            event.preventDefault(); first.focus();
+                        }
+                    };
+                    document.addEventListener("keydown", trapFocus);
+                    return () => {
+                        document.body.style.overflow = oldOverflow;
+                        document.removeEventListener("keydown", trapFocus);
+                    };
+                }, []);
                 if (!study) return null;
                 const Icon = study.icon;
                 const hasDetails = study.challenge && study.solution;
@@ -518,7 +554,7 @@
                 return (
                 <div role="presentation" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
                     <div 
-                    role="dialog" aria-modal="true" aria-labelledby={`case-study-title-${study.id}`} className={`${theme.modalBg} ${theme.modalBorder} border w-full max-w-4xl rounded-2xl shadow-2xl shadow-black/50 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-300`}
+                    ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={`case-study-title-${study.id}`} aria-describedby={`case-study-desc-${study.id}`} className={`${theme.modalBg} ${theme.modalBorder} border w-full max-w-4xl rounded-2xl shadow-2xl shadow-black/50 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-300`}
                     onClick={(e) => e.stopPropagation()}
                     >
                     <div className={`p-6 border-b ${theme.modalBorder} ${theme.modalBg} sticky top-0 z-10 flex justify-between items-start`}>
@@ -536,12 +572,13 @@
                             <p className={`text-sm mt-1 ${theme.textMuted}`}>Client: {study.client}</p>
                         </div>
                         </div>
-                        <button onClick={onClose} autoFocus aria-label="Close case study" className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10 text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'}`}>
+                        <button type="button" onClick={onClose} aria-label="Close case study" className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10 text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'}`}>
                         <X className="w-6 h-6" />
                         </button>
                     </div>
 
                     <div className={`p-8 overflow-y-auto space-y-8 ${isDarkMode ? 'bg-[#0B1121]/50' : 'bg-slate-50/50'}`}>
+                        <p id={`case-study-desc-${study.id}`} className={`text-sm leading-relaxed ${theme.textMuted}`}>{study.summary}</p>
                         <div className="flex flex-wrap gap-4">
                         {study.links?.study && (
                             <a href={study.links.study} target="_blank" rel="noopener noreferrer" className="flex-1 min-w-[200px] bg-blue-600 hover:bg-blue-500 text-white py-3 px-4 rounded-lg font-semibold text-center transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:-translate-y-0.5">
@@ -629,7 +666,7 @@
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
-                        <a href="https://code.tabitha.dev/" target="_blank" rel="noreferrer" className={`text-2xl font-bold tracking-tight flex items-center gap-2 group hover:opacity-90 transition-opacity ${theme.text}`}>
+                        <a href="https://code.tabitha.dev/" target="_blank" rel="noopener noreferrer" aria-label="Tabitha Khadse portfolio home (opens in new tab)" className={`text-2xl font-bold tracking-tight flex items-center gap-2 group hover:opacity-90 transition-opacity ${theme.text}`}>
                             <span className="rounded-lg overflow-hidden shrink-0 inline-flex w-11 h-11"><img src="assets/tk-monogram.svg" width="44" height="44" alt="" aria-hidden="true" decoding="async" className="w-11 h-11 object-cover" /></span>
                             <span>Tabitha<span className={theme.textAccent}>.dev</span></span>
                         </a>
@@ -637,18 +674,18 @@
                         </div>
                         
                         <div className="flex items-center gap-3">
-                        <a href="https://code.tabitha.dev/" target="_blank" rel="noreferrer" className={`hidden md:block text-sm font-medium transition-colors mr-4 ${theme.textMuted} hover:${theme.text}`}>
+                        <a href="https://code.tabitha.dev/" target="_blank" rel="noopener noreferrer" className={`hidden md:block text-sm font-medium transition-colors mr-4 ${theme.textMuted} hover:${theme.text}`}>
                             Main Portfolio
                         </a>
-                        <a href="https://code.tabitha.dev/Tabitha_Khadse_Frontend_Engineer_Resume.pdf" target="_blank" rel="noreferrer" className={`text-sm font-bold px-3 py-2 flex items-center gap-2 transition-colors ${theme.textMuted} hover:${theme.text}`}>
+                        <a href="https://code.tabitha.dev/Tabitha_Khadse_Frontend_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" aria-label="View Tabitha Khadse frontend engineer resume PDF in a new tab" className={`text-sm font-bold px-3 py-2 flex items-center gap-2 transition-colors ${theme.textMuted} hover:${theme.text}`}>
                             <FileText className="w-4 h-4" /> Resume
                         </a>
-                        <a href="https://code.tabitha.dev/code/Schedule-a-Meeting/" target="_blank" rel="noreferrer" className={`px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all shadow-lg hover:-translate-y-0.5 ${isDarkMode ? 'bg-white text-slate-900 hover:bg-blue-50' : 'bg-slate-900 text-white hover:bg-slate-800'}`}>
+                        <a href="https://code.tabitha.dev/code/Schedule-a-Meeting/" target="_blank" rel="noopener noreferrer" className={`px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all shadow-lg hover:-translate-y-0.5 ${isDarkMode ? 'bg-white text-slate-900 hover:bg-blue-50' : 'bg-slate-900 text-white hover:bg-slate-800'}`}>
                             <span>Let's Talk</span>
                             <ArrowRight className="w-4 h-4" />
                         </a>
                         
-                        <button onClick={() => setIsDarkMode(!isDarkMode)} aria-label={isDarkMode ? "Switch to light theme" : "Switch to dark theme"} className={`p-2 rounded-full transition-colors border ${isDarkMode ? 'bg-white/5 border-white/10 text-yellow-400 hover:bg-white/10' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`} title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
+                        <button type="button" onClick={() => setIsDarkMode(!isDarkMode)} aria-label={isDarkMode ? "Switch to light theme" : "Switch to dark theme"} className={`p-2 rounded-full transition-colors border ${isDarkMode ? 'bg-white/5 border-white/10 text-yellow-400 hover:bg-white/10' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`} title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
                             {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                         </button>
                         </div>
@@ -673,7 +710,7 @@
                     </div>
                     </div>
 
-                    <div className={`py-8 ${theme.marqueeBg} overflow-hidden relative marquee-mask mb-16 backdrop-blur-sm`}>
+                    <div aria-hidden="true" className={`py-8 ${theme.marqueeBg} overflow-hidden relative marquee-mask mb-16 backdrop-blur-sm`}>
                         <div className="flex w-max animate-marquee">
                             <div className="flex items-center gap-16 px-8">
                                 <span className={`text-xl font-bold ${theme.marqueeText} flex items-center gap-3`}><Server className="w-5 h-5" /> Node.js</span>
@@ -800,7 +837,7 @@
                         <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 sticky top-24 z-20 py-4 backdrop-blur-xl ${isDarkMode ? 'bg-[#0B1121]/90' : 'bg-slate-50/90'} rounded-xl px-2`}>
                             <div className="flex flex-wrap gap-2">
                                 {CATEGORIES.map(cat => (
-                                    <button key={cat} onClick={() => setActiveCategory(cat)} aria-pressed={activeCategory === cat} className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-200 border ${activeCategory === cat ? (isDarkMode ? 'bg-white text-slate-900 border-white' : 'bg-slate-900 text-white border-slate-900') : (isDarkMode ? 'bg-transparent text-slate-400 border-white/10 hover:border-white/30 hover:text-white' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-800')}`}>
+                                    <button type="button" key={cat} onClick={() => setActiveCategory(cat)} aria-pressed={activeCategory === cat} className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-200 border ${activeCategory === cat ? (isDarkMode ? 'bg-white text-slate-900 border-white' : 'bg-slate-900 text-white border-slate-900') : (isDarkMode ? 'bg-transparent text-slate-400 border-white/10 hover:border-white/30 hover:text-white' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-800')}`}>
                                         {cat}
                                     </button>
                                 ))}
@@ -811,11 +848,12 @@
                             </div>
                         </div>
 
+                        <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{filteredData.length} case {filteredData.length === 1 ? "study" : "studies"} shown.</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
                             {filteredData.map((item) => {
                                 const Icon = item.icon;
                                 return (
-                                    <div key={item.id} role="button" tabIndex={0} aria-label={`Read details for ${item.title}`} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedCase(item); } }} onClick={() => setSelectedCase(item)} className={`group relative focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${theme.cardBg} border ${theme.cardBorder} ${theme.cardHoverBorder} rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer flex flex-col h-full hover:-translate-y-1`}>
+                                    <div key={item.id} role="button" tabIndex={0} aria-haspopup="dialog" aria-label={`Read details for ${item.title}`} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openCaseStudy(item, e.currentTarget); } }} onClick={(e) => openCaseStudy(item, e.currentTarget)} className={`group relative focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${theme.cardBg} border ${theme.cardBorder} ${theme.cardHoverBorder} rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer flex flex-col h-full hover:-translate-y-1`}>
                                             <div className="p-8 pb-6">
                                                 <div className="flex justify-between items-start mb-8">
                                                     <div className={`p-3.5 rounded-2xl transition-colors ${isDarkMode ? 'bg-slate-800/80 group-hover:bg-blue-500/20 group-hover:text-blue-300' : 'bg-slate-100 group-hover:bg-blue-50 group-hover:text-blue-600'}`}>
@@ -849,7 +887,7 @@
                                 </div>
                                 <h3 className={`text-lg font-bold ${theme.text}`}>No case studies found</h3>
                                 <p className={theme.textMuted}>Try adjusting your filters or search terms.</p>
-                                <button onClick={() => {setSearchQuery(""); setActiveCategory("All")}} className="mt-6 text-blue-500 hover:text-blue-400 text-sm font-bold uppercase tracking-wide">
+                                <button type="button" onClick={() => {setSearchQuery(""); setActiveCategory("All")}} className="mt-6 text-blue-500 hover:text-blue-400 text-sm font-bold uppercase tracking-wide">
                                     Clear all filters
                                 </button>
                             </div>
@@ -905,7 +943,7 @@
                                     <a href="mailto:tabitha-dev@outlook.com" className={`px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all shadow-lg hover:-translate-y-1 ${isDarkMode ? 'bg-white text-blue-900 hover:bg-blue-50' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>
                                                 <Mail className="w-5 h-5" /> Send an Email
                                     </a>
-                                    <a href="https://code.tabitha.dev/code/Schedule-a-Meeting/" target="_blank" className={`px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all border hover:-translate-y-1 ${isDarkMode ? 'border-white/20 hover:bg-white/10 text-white' : 'border-slate-200 hover:bg-white text-slate-700'}`}>
+                                    <a href="https://code.tabitha.dev/code/Schedule-a-Meeting/" target="_blank" rel="noopener noreferrer" className={`px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all border hover:-translate-y-1 ${isDarkMode ? 'border-white/20 hover:bg-white/10 text-white' : 'border-slate-200 hover:bg-white text-slate-700'}`}>
                                                 <CalendarCheck className="w-5 h-5" /> Let's Connect
                                     </a>
                                 </div>
@@ -926,19 +964,19 @@
                                 <span>Tabitha<span className={theme.textMuted}>.</span>dev</span>
                             </h2>
                             <p className={`${theme.textMuted} text-xs mt-3`}>© 2026 Tabitha Khadse. All rights reserved.</p>
-                            <p className="text-[10px] text-slate-600 mt-2 opacity-50 font-mono">Built with React & Tailwind</p>
+                            <p className={`text-xs mt-2 font-mono ${theme.textMuted}`}>Built with React &amp; Tailwind</p>
                         </div>
-                        <div className="flex gap-8">
-                            <a href="https://github.com/tabitha-dev" target="_blank" rel="noreferrer" className={`${theme.textMuted} hover:text-blue-500 transition-colors`}>
+                        <nav aria-label="Social and contact links" className="flex gap-8">
+                            <a aria-label="Tabitha Khadse on GitHub (opens in a new tab)" href="https://github.com/tabitha-dev" target="_blank" rel="noopener noreferrer" className={`${theme.textMuted} hover:text-blue-500 transition-colors`}>
                                 <Github className="w-5 h-5" />
                             </a>
-                            <a href="https://www.linkedin.com/in/tabitha-dev/" target="_blank" rel="noreferrer" className={`${theme.textMuted} hover:text-blue-500 transition-colors`}>
+                            <a aria-label="Tabitha Khadse on LinkedIn (opens in a new tab)" href="https://www.linkedin.com/in/tabitha-dev/" target="_blank" rel="noopener noreferrer" className={`${theme.textMuted} hover:text-blue-500 transition-colors`}>
                                 <Linkedin className="w-5 h-5" />
                             </a>
-                            <a href="mailto:tabitha-dev@outlook.com" className={`${theme.textMuted} hover:text-blue-500 transition-colors`}>
+                            <a aria-label="Email Tabitha Khadse" href="mailto:tabitha-dev@outlook.com" className={`${theme.textMuted} hover:text-blue-500 transition-colors`}>
                                 <Mail className="w-5 h-5" />
                             </a>
-                        </div>
+                        </nav>
                     </div>
                 </footer>
 

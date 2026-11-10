@@ -78,7 +78,7 @@ logo = ROOT / "assets" / "tk-monogram.svg"
 check(logo.exists() and '<svg' in logo.read_text(encoding="utf-8") and "TK monogram" in logo.read_text(encoding="utf-8"), "Shared TK logo exists")
 check(html.count("assets/tk-monogram.svg") >= 5 and 'rel="icon" type="image/svg+xml"' in html, "Header, footer, fallback, favicon and metadata use shared TK")
 
-matches = re.findall(r'<script type="application/ld\\+json">([\\s\\S]*?)</script>', html)
+matches = re.findall(r'<script type="application/ld[+]json">(.*?)</script>', html, flags=re.DOTALL)
 try:
     data = json.loads(matches[0]) if matches else None
 except json.JSONDecodeError:

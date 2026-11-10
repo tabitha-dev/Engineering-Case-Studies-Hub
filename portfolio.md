@@ -23,8 +23,8 @@ Tabitha Khadse is a frontend-focused software engineer working with responsive U
 - **Voice2Asana** — Voice-to-task review, subtasks and Asana API workflow. Demo: https://tabitha-dev.github.io/voice-to-asana-tasks/
 - **Lumina Family OS** — Browser-local household dashboard, calendar, routines and lists. No automatic cross-device sync. Demo: https://tabitha-dev.github.io/Lumina-Family-OS/
 - **Accountability & Hopeful Fridays** — Nonprofit website frontend and volunteer technology work. Live site: https://hopefulfridays.org/
-- **Sthit** — Wellness resources and service website. Review preview: https://tabitha-dev.github.io/Sthit/
-- **Buffalo Leather Belts** — Product catalog, customization and inquiry-led orders. Preview: https://tabitha-dev.github.io/buffalo-belt-boutique/
+- **Sthit** — Wellness resources and service website. Live website: https://sthit.life/
+- **Buffalo Leather Belts** — Product catalog, customization and inquiry-led orders. Live website: https://buffaloleatherbelts.store/
 - **Big World** — Responsive children's book, printables and craft resource website, with human-reviewed AI-assisted workflows. Live site: https://code.tabitha.dev/bigworld/
 
 ## How to interpret the projects

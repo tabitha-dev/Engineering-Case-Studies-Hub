@@ -1,0 +1,22 @@
+# Tabitha Khadse — Engineering Case Studies Hub
+
+> Engineering project portfolio by frontend-focused software engineer Tabitha Khadse. Covers responsive frontends, browser QA, synthetic healthcare dashboards, AI engineering experiments and workflow automation.
+
+- [Official engineering hub](https://tabitha-dev.github.io/Engineering-Case-Studies-Hub/)
+- [Text version of engineering case studies](https://tabitha-dev.github.io/Engineering-Case-Studies-Hub/portfolio.md)
+- [Main portfolio and career information](https://code.tabitha.dev/)
+- [GitHub profile](https://github.com/tabitha-dev)
+- [LinkedIn](https://www.linkedin.com/in/tabitha-dev/)
+
+## Representative work
+
+- [TabbyGuard — released frontend QA tool](https://github.com/tabitha-dev/TabbyGuard)
+- [MedOps — synthetic healthcare dashboard](https://tabitha-dev.github.io/Medical-Practice-Dashboard/)
+- [Wearwise — weather-aware JavaScript app](https://tabitha-dev.github.io/Weather_Outfit_Assitance_v2/)
+- [JARVIS — local AI voice assistant](https://github.com/tabitha-dev/jarvis-local-ai)
+- [ShipLab — reviewed AI-agent experiment](https://github.com/tabitha-dev/agent-shiplab)
+- [Big World — book and learning resource platform](https://code.tabitha.dev/bigworld/)
+
+## Important distinctions
+
+The hub includes educational simulations and experiments. Clinical and billing demos use synthetic data and are not certified production medical systems. For ShipLab, independent CI passed but native agent-recorded QA was not verified. Human review remains part of AI-assisted work. The source and current portfolio are the best references for implementation and role details.

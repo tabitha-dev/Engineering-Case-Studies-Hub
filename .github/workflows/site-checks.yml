@@ -1,0 +1,33 @@
+name: SEO AEO and accessibility source checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/tk-monogram.svg'
+      - 'portfolio.md'
+      - 'llms.txt'
+      - 'sitemap.xml'
+      - 'scripts/check_site.py'
+      - '.github/workflows/site-checks.yml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-audit:
+    name: Metadata, structured data, indexing and accessibility checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate site sources
+        run: python scripts/check_site.py
